@@ -24,3 +24,5 @@ publish:
   script:
     - npm install
     - npm run publish
+  only:
+    - tags

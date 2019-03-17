@@ -1,0 +1,33 @@
+{
+  "name": "consentacles",
+  "version": "0.0.1",
+  "description": "Minimalistic web framework for fast load times.",
+  "main": "cli.js",
+  "scripts": {
+    "test": "jest",
+    "publish": "npm-cli-login && npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.xvrqt.com/amy/set.git"
+  },
+  "keywords": [
+    "framework",
+    "typescript",
+    "sass",
+    "css",
+    "html",
+    "cli",
+    "scss",
+    "es6",
+    "generator"
+  ],
+  "bin": {
+    "hello": "./cli.js"
+  },
+  "author": "Amy Jie",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "npm-cli-login": "^0.1.1"
+  }
+}

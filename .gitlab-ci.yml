@@ -1,0 +1,26 @@
+stages:
+    - test
+    - publish
+
+image: node
+
+cache:
+  paths:
+    - node_modules/
+      
+test:
+  stage: test
+  tags:
+    - docker
+  script:
+    - npm install
+    - npm link
+    - hello
+
+publish:
+  stage: publish
+  tags:
+    - docker
+  script:
+    - npm install
+    - npm run publish

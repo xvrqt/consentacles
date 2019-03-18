@@ -23,11 +23,15 @@
     "generator"
   ],
   "bin": {
-    "hello": "./cli.js"
+    "consentacles": "./cli/cli.js"
   },
   "author": "Amy Jie",
   "license": "BSD-3-Clause",
   "devDependencies": {
+    "jest": "^24.5.0",
     "npm-cli-login": "^0.1.1"
+  },
+  "dependencies": {
+    "chalk": "^2.4.2"
   }
 }

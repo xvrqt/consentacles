@@ -18,7 +18,6 @@ const commands = [
 	"serve",
 	"secret"
 ];
-const command_str = commands.slice(0,-1).join(', ');
 
 /*******************
 * HELPER FUNCTIONS *
@@ -47,7 +46,15 @@ const [,, ...args] = process.argv;
 /* Check to make sure that an argument was passed */
 if(args.length === 0) {
 	printError('No command provided.');
-	printSubtle(`Available commands: ${command_str}`);
+	printSubtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
+	process.exit(1);
+}
+
+/* Check to make sure the command is known */
+const command = args[0];
+if(commands.indexOf(command) === -1) {
+	printError('Unknown command provided.');
+	printSubtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
 	process.exit(1);
 }
 

@@ -23,8 +23,7 @@ describe("Exits with an error if unknown command is provided", () => {
 
 	/* Test UNKNOWN invocation */
 	test('Exits with error if unknown command is present', (done) => {
-		const run = cmd + " unknown";
-		const child = spawn(run);
+		const child = spawn(cmd, ['unknown']);
 		child.on('exit', (code, signal) => {
 			expect(code).toBe(1);
 			done();

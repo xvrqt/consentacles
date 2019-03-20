@@ -8,6 +8,9 @@ const pkg = require('../package.json');
 
 /* Pretty Colors */
 const chalk = require('chalk');
+if(process.env.chalk === 'disabled') {
+	chalk.enabled = false;
+}
 
 /************
  * COMMANDS *

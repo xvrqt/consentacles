@@ -4,6 +4,9 @@
 
 /* Pretty Colors */
 const chalk = require('chalk');
+if(process.env.chalk === 'disabled') {
+    chalk.enabled = false;
+}
 
 const help_text = `${chalk.magenta('################\n# Consentacles #\n################')}
 

@@ -3,11 +3,16 @@
 /* Parsers the commands and dispatches them to the appropriate module 
  */
 
-/* Import the package info */
+const fs = require('fs');
 const pkg = require('../package.json');
 
 /* Pretty Colors */
 const chalk = require('chalk');
+
+/************
+ * COMMANDS *
+ ************/
+const help = require('./help.js');
 
 /* CONSTANTS */
 const commands = [
@@ -40,6 +45,18 @@ function printSubtle(text) {
 	console.log(chalk.dim(text));
 }
 
+/* Returns a file as a string */
+function fileToStr(filename) {
+	fs.readFileSync(filename, 'utf8', (error, data) => {
+		if(error) {
+			console.log(`Error: ${error}`);
+			process.exit(1);
+		} else {
+			return data;
+		}
+	});
+}
+
 /* Grab the args */
 const [,, ...args] = process.argv;
 
@@ -50,19 +67,13 @@ if(args.length === 0) {
 	process.exit(1);
 }
 
-/* Check to make sure the command is known */
 const command = args[0];
-if(commands.indexOf(command) === -1) {
-	printError('Unknown command provided.');
-	printSubtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
-	process.exit(1);
+switch(command) {
+	case 'help': 	// Print the help text and exit
+		help.run();
+		break;
+	default:
+		printError('Unknown command provided.');
+		printSubtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
+		process.exit(1);
 }
-
-/************
- * COMMANDS *
- ************/
-
-
-
-
-// console.log(`Hello Girls ${args}`);

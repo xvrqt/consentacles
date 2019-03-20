@@ -10,46 +10,71 @@ const cmd = Object.getOwnPropertyNames(pkg.bin)[0];
 
 /* Commands */
 const help = require('./help.js');
+const secret = require('./secret.js');
 
 /* We're testing a binary so we need to run child processes */
 const { spawn } = require('child_process');
 
 describe("Exits with an error if unknown command is provided", () => {
 	/* Test EMPTY invocation */
-	test('Exits with error if no command is present', (done) => {
+	test('Exits with error if no command is present', async () => {
 		const child = spawn(cmd);
-		child.on('exit', (code, signal) => {
+		await child.on('exit', (code, signal) => {
 			expect(code).toBe(1);
-			done();
 		});
 	});
 
 	/* Test UNKNOWN invocation */
-	test('Exits with error if unknown command is present', (done) => {
+	test('Exits with error if unknown command is present', async () => {
 		const child = spawn(cmd, ['unknown']);
-		child.on('exit', (code, signal) => {
+		await child.on('exit', (code, signal) => {
 			expect(code).toBe(1);
-			done();
-		});
+ 		});
 	});
 });
 
 describe("HELP Command", () => {
 	/* Test EMPTY invocation */
-	test('Prints the help text to stdout', (done) => {
+	test('Prints the help text to stdout', async () => {
 		const child = spawn(cmd, ['help']);
 		let help_text = "";
 		child.stdout.on('data', (chunk) => {
 			help_text += chunk.toString();
 		});
-		child.on('exit', (code, signal) => {
+		await child.on('exit', (code, signal) => {
 			expect(code).toBe(0);
 			expect(help_text.trim()).toBe(help.text.trim());
-			done();
-		});
+ 		});
 	});
 
 });
 
-/* Test HELP command */
-// test('HELP:')
+describe("Version Command", () => {
+	/* Test EMPTY invocation */
+	test('Prints the version number to stdout', async () => {
+		const child = spawn(cmd, ['version']);
+		let version = "";
+		child.stdout.on('data', (chunk) => {
+			version += chunk.toString();
+		});
+		await child.on('exit', (code, signal) => {
+			expect(code).toBe(0);
+			expect(version.trim()).toBe(pkg.version.trim());
+ 		});
+	});
+});
+
+describe("Secret Command", () => {
+	/* Test EMPTY invocation */
+	test('Prints the secret to stdout', async () => {
+		const child = spawn(cmd, ['secret']);
+		let secret_text = "";
+		child.stdout.on('data', (chunk) => {
+			secret_text += chunk.toString();
+		});
+		await child.on('exit', (code, signal) => {
+			expect(code).toBe(0);
+			expect(secret_text.trim()).toBe(secret.text.trim());
+		});
+	});
+});

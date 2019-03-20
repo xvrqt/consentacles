@@ -16,6 +16,7 @@ if(process.env.chalk === 'disabled') {
  * COMMANDS *
  ************/
 const help = require('./help.js');
+const secret = require('./secret');
 
 /* CONSTANTS */
 const commands = [
@@ -74,6 +75,13 @@ const command = args[0];
 switch(command) {
 	case 'help': 	// Print the help text and exit
 		help.run();
+		break;
+	case 'version':
+		const version = pkg.version;
+		console.log(chalk.magenta(version));
+		break;
+	case 'secret':
+		secret.run();
 		break;
 	default:
 		printError('Unknown command provided.');

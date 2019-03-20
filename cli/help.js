@@ -5,13 +5,22 @@
 /* Pretty Colors */
 const chalk = require('chalk');
 
-const help_text = `Consentacles
-	
+const help_text = `${chalk.magenta('################\n# Consentacles #\n################')}
+
+Usage:
+    ${chalk.dim('$ consentacles <command> (option)')}
+
+Commands:
+    - new
+    - help        ${chalk.dim('prints this text')}
+    - build
+    - serve
+    - version     ${chalk.dim('prints the version number')}
 `;
 
 module.exports = {
-	run: () => {
-		console.log(help_text);
-	},
-	text: help_text
+    run: () => {
+        console.log(help_text);
+    },
+    text: help_text
 };

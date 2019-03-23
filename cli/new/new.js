@@ -74,6 +74,7 @@ const project_directories = [
 
 /* Project Route */
 async function project(name) {
+	name = name ? name : defaults.project.name;
 	directory_created = [mkdir(name)];
 	project_directories.forEach((value) => {
 		directory_created.push(mkdir(`${name}/${value}`, true));

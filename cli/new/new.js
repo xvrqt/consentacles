@@ -1,5 +1,7 @@
 const fs = require('fs');
+const ncp = require('ncp').ncp;
 const pkg = require('../../package.json');
+const rimraf = require('rimraf');
 
 /* Pretty Colors */
 const chalk = require('chalk');
@@ -26,6 +28,10 @@ function printError(error) {
 	console.log(chalk.bgRed.bold('Error:') + ' ' + chalk.red(error));
 }
 
+function printErrorReason(reason) {
+	console.log(chalk.yellowBright(' - ') + chalk.white(reason));
+}
+
 /* Prints dim text. Useful for additional info */
 function printSubtle(text) {
 	console.log(chalk.dim(text));
@@ -42,6 +48,16 @@ function mkdir(name, recursive) {
 			} else { resolve(); }
 		})
 	})
+}
+
+/* Wraps fs.copyFile in a promize to make it more tractable */
+function copyFile(source, destination) {
+	return new Promise((resolve, reject) => {
+		fs.copyFile(source, destination, (error) => {
+			if(error) { reject(error); }
+			else { resolve(); }
+		});
+	});
 }
 
 /* CONSTANTS */
@@ -61,26 +77,43 @@ const defaults = {
 	}
 };
 
-const project_directories = [
-	"dist",
-	"src/components",
-	"src/icons",
-	"src/images",
-	"src/meta",
-	"src/pages",
-	"src/scripts",
-	"src/styles"
-];
-
 /* Project Route */
 async function project(name) {
 	name = name ? name : defaults.project.name;
-	directory_created = [mkdir(name)];
-	project_directories.forEach((value) => {
-		directory_created.push(mkdir(`${name}/${value}`, true));
+
+	/* Check to see if the directory already exists */
+	await new Promise((resolve, reject) => {
+		fs.access(name, (error) => {
+			if(error && error.code === 'ENOENT') {
+				resolve();
+			} else {
+				printError(`Failed to create new ${chalk.magenta('Consentacles')} project.`);
+				printErrorReason(`Directory '${name}' already exists.`);
+				process.exit(1);	
+			}
+		});
 	});
-	await Promise.all(directory_created);
-	console.log('done');
+
+	/* Copy the base files for an empty new project from source_files */
+	source_path = `${__dirname}/source_files`;
+	await new Promise((resolve) => {
+		ncp(source_path, name, {stopOnErr: true}, async (error) => {
+			if(error) {
+				printError(`Failed to create new ${chalk.magenta('Consentacles')} project.`);
+				printErrorReason(error);
+
+				/* Clean up */
+				await new Promise((resolve, reject) => {
+					rimraf(workspace, (error) => {
+						if(error) { reject(error); }
+						else { resolve(); }
+					});
+				});
+
+				process.exit(1);
+			} else { resolve(); }
+		});
+	});
 }
 
 /* 'new' can create many things, this function hands off control to the correct

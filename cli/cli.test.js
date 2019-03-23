@@ -33,6 +33,18 @@ describe("Exits with an error if unknown command is provided", () => {
 	});
 });
 
+/* New, Build and Server have their own test suite as they are considerably
+ * more complex.
+*/
+describe("NEW Command", () => {
+	test("Exits with error if the option is unspecified", async () => {
+		const child = spawn(cmd, ['new']);
+		await child.on('exit', (code, signal) => {
+			expect(code).toBe(1);
+		});
+	});
+});
+
 describe("HELP Command", () => {
 	/* Test EMPTY invocation */
 	test('Prints the help text to stdout', async () => {

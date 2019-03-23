@@ -15,6 +15,7 @@ if(process.env.chalk === 'disabled') {
 /************
  * COMMANDS *
  ************/
+const new_cmd = require('./new/new.js');
 const help = require('./help.js');
 const secret = require('./secret');
 
@@ -73,6 +74,9 @@ if(args.length === 0) {
 
 const command = args[0];
 switch(command) {
+	case 'new':
+		new_cmd.run(...args.slice(1));
+		break;
 	case 'help': 	// Print the help text and exit
 		help.run();
 		break;

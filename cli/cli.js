@@ -17,6 +17,7 @@ if(process.env.chalk === 'disabled') {
  ************/
 const new_cmd = require('./new/new.js');
 const help = require('./help.js');
+const build = require('./build/build.js');
 const secret = require('./secret');
 
 /* CONSTANTS */
@@ -79,6 +80,9 @@ switch(command) {
 		break;
 	case 'help': 	// Print the help text and exit
 		help.run();
+		break;
+	case 'build':
+		build.run();
 		break;
 	case 'version':
 		const version = pkg.version;

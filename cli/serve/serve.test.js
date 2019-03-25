@@ -29,20 +29,20 @@ beforeAll(async () => {
 	});
 
 	/* Create and build a new consentacles projext */
-	await new Promise ((resolve, reject) => {
-		process.chdir(workspace);
-		const child = spawn(cmd, ['new', 'project', 'foo']);
-		child.on('exit', async (code, signal) => {
-			process.chdir(workspace + '/foo');
-			const build = spawn(cmd, ['build']);
-			build.on('exit', async (code, signal) => {
-				if(code != 0) {
-					console.error("Could not create and build a new Consentacles project named 'foo' to test the serve command. Abandoning serve testing.");
-					reject();
-				} else { resolve(); }
-			});
-		});
-	});
+	// await new Promise ((resolve, reject) => {
+	// 	process.chdir(workspace);
+	// 	const child = spawn(cmd, ['new', 'project', 'foo']);
+	// 	child.on('exit', async (code, signal) => {
+	// 		process.chdir(workspace + '/foo');
+	// 		const build = spawn(cmd, ['build']);
+	// 		build.on('exit', async (code, signal) => {
+	// 			if(code != 0) {
+	// 				console.error("Could not create and build a new Consentacles project named 'foo' to test the serve command. Abandoning serve testing.");
+	// 				reject();
+	// 			} else { resolve(); }
+	// 		});
+	// 	});
+	// });
 });
 
 /* Clean up the directory structure */

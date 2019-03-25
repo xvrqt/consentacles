@@ -78,7 +78,7 @@ switch(command) {
 	case 'new':
 		new_cmd.run(...args.slice(1));
 		break;
-	case 'help': 	// Print the help text and exit
+	case 'help':
 		help.run();
 		break;
 	case 'build':

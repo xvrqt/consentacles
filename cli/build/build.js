@@ -50,7 +50,7 @@ function dispatch(type, name) {
 	} else {
 		switch (type) {
 			case 'component':
-				// project(name);
+				console.log('Not yet implemented');
 				break;
 			default:
 				printError('Unrecognized option provided.');

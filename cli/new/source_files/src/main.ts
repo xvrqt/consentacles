@@ -1,8 +1,5 @@
-import { helloTypeScript } from 'scripts/example_import';
+/* Primary script imported by all pages by default */
+import { helloConsentacles } from './scripts/example.js';
 
-(() => {
-  /* Test that the TypeScript in our scripts/ directory can be imported at 
-   * transpile time
-  */
-  console.log(helloTypeScript("Girls"));
-})();
+/* Print a lovely message to the console on load */
+helloConsentacles();

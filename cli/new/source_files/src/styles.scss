@@ -1,98 +1,62 @@
 /* Global styles can be included in this sheet. If you want to break up your 
  * styles, create SCSS files pre-pended with an '_' in the styles/ directory
  * and import them here.
+ * 
+ * Styling for individual pages should be reside as siblings to their HTML in 
+ * pages/ directory
 */
 @import "styles/reset";
 @import "styles/variables";
 
-body {
-	background-color: $background-color;
+@import "styles/fonts/mogra/mogra";
+
+html { 
+	height:100%;
 }
 
-.container {
-	width: 100%;
-	max-width: $container-max-width;
-	min-width: $container-min-width;
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    position: relative;
 
-	height: 100%;
+    z-index: 1;
 
-	margin: 0px auto;
-	padding: 25px 10px;
-	box-sizing: border-box; // Uses the padding in width calculations
+    /* Deep ocean vibe */
+   	background: radial-gradient(circle, #04619F 0%, #111 95%);
+}
 
+#container {
 	color: $font-color;
 	text-align: center;
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-	img {
-		width: $img-width;
+	z-index: 1;
+	position: relative;
 
-		margin: 0px auto;
-		display: block;
-		box-sizing: border-box; // Uses the border weight in width calculations
-
-		border: $img-border-width #FFF solid;
-		border-radius: 25%;
-	}
-
-	#text {
-		width: $img-width;
-		margin: 10px auto;
-
-		h1 {
-			color: #EEE;
-			margin: 25px auto 0px auto;
-		}
-
-		hr {
-			border: 1px #B9DADA solid;
-			opacity: 0.5;
-		}
-
-		p {
-			margin: 10px auto 30px auto;
-			text-align: center;
-		}
-	}
-
-	.git {
-		width: 150px;
-		height: 50px;
-
-		margin: 10px auto;
-		padding: 5px;
-
-		border-radius: 10px;
-		// border-color: #DDD;
-
-		a {
-			text-decoration: none;
-			color: #222;
-
-			font-size: 1.25em;
-		}
-
+	tentacle-image {
+		max-width: 100%;
 		img {
-			width: 50px;
-			height: 100%;
-
-			float: left;
-			border: none;
-		}
-
-		h3 {
-			float: left;
-			margin-top: calc(25px - 0.625em);
-			margin-left: 15px;
+			max-width: 100%;
 		}
 	}
-}
 
-/* Set the background based on WebP support */
-.no-webp .git {
-	background: url(img/git_bg.png);
-}
+	h1 {
+		font-size: 40px;
+		text-align: center;
+		font-family: 'Mogra', cursive;
+		text-shadow: 2px 2px rgba(25, 25, 25, 0.5);
 
-.webp .git {
-	background: url(img/git_bg.webp);
+		margin: 0 auto;
+	}
+
+	a {
+		color: $font-color;
+		cursor: pointer;
+		text-decoration: none;
+
+		&:visited {
+			color: $font-color;
+		}
+	}
 }

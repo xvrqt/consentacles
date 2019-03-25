@@ -3,17 +3,14 @@
 
   <head>
     <!-- Title and Description -->
-    <title>TypeScript Web App Starter Pack</title>
-    <meta name="description" content="A TypeScript, SCSS, framework agnostic website starter template.">
+    <title>Consentacles</title>
+    <meta name="description" content="Webdev toolchain, for websites that dare to be different.">
 
-    <!-- How to display the page -->
+    <!-- Page Setup -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Apple specific pinning meta data location -->
-    <link rel="manifest" href="/icons/site.webmanifest">
     
-    <!-- Different types of icons -->
+    <!-- Icons -->
     <link rel="apple-touch-icon" sizes="57x57" href="/icons/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/icons/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/icons/apple-icon-72x72.png">
@@ -29,14 +26,16 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/icons/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
     
+    <!-- Color of the icon's background (when applicable) -->
     <meta name="theme-color" content="#5BBAD5">
+
+    <!-- Apple specific icon meta info  -->
+    <link rel="manifest" href="/icons/site.webmanifest">
 
     <!-- Microsoft specific meta data -->
     <meta name="msapplication-config" content="/icons/browserconfig.xml">
     <meta name="msapplication-TileColor" content="#5BBAD5">
     <meta name="theme-color" content="#5BBAD5">
-
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
 
     <!-- inject:head:js -->
     <!-- livereload.js will be injected here if this is a dev build -->
@@ -47,58 +46,27 @@
       document.documentElement.classList.remove("no-js");
     </script>
 
-    <!-- Our single style sheet -->
+    <!-- Components -->
+    <script type="module" src="components/bubble-background/bubble-background.js"></script>
+    <script type="module" src="components/tentacle-image/tentacle-image.js"></script>
+
+    <!-- Primary stylesheet -->
     <link rel="stylesheet" href="styles.css">
   </head>
 
   <body>
-    <div class="container">
-      <picture>
-        <source srcset="img/amy.webp 1x" type="image/webp" />
-        <source srcset="img/amy.png 1x"  type="image/png" />
-        <img src="img/amy.png" class="logo" alt="A portrait of the maintaner of Typescript Web App Starter" />
-      </picture>
-      <div id="text">
-        <h1>Hello, World!</h1>
-        <hr />
-        <p>If you're reading this, TypeScript Web App Template is working!</p>
-      </div>
+    <!-- Canvas Element that adds animated bubbles to the background -->
+    <bubble-background number="50"></bubble-background>
 
-      <!-- Links to the Git Repository -->
-      <div class="git">
-        <a href="https://git.xvrqt.com/amy/typescript-web-app-template">
-          <picture>
-            <source srcset="img/gitlab.webp 1x" type="image/webp" />
-            <source srcset="img/gitlab.png 1x"  type="image/png" />
-            <img src="img/gitlab.png" class="logo" alt="GitLab Logo" />
-          </picture>
-          <h3>GitLab</h3>
-        </a>
-      </div>
-
-      <div class="git">
-        <a href="https://github.com/xvrqt/TypeScript-Web-App-Template">
-          <picture>
-            <source srcset="img/github.webp 1x" type="image/webp" />
-            <source srcset="img/github.png 1x"  type="image/png" />
-            <img src="img/github.png" class="logo" alt="GitHub Logo" />
-          </picture>
-          <h3>GitHub</h3>
-        </a>
-      </div>
+    <div id="container">
+        <tentacle-image src="/images/logo.png"></tentacle-image>
+        <h1>Consentacles</h1>
+        <h2>v0.1.0 | <a href="https://git.xvrqt.com/amy/consentacles">GitLab</a> | <a href="">GitHub</a></h2>
     </div>
 
     <!-- Our main JS script -->
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
 
-    <!-- TS & JS Modules from scripts/ -->
-    <script type="module">
-      import { helloTypeScript } from "./scripts/example_ts.js";
-      import { helloJavaScript } from "./scripts/example_js.js";
-
-      console.log(helloTypeScript("Girls"));
-      console.log(helloJavaScript("Girls"));
-    </script>>
   </body>
 
 </html>

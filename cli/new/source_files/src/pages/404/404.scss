@@ -1,33 +1,18 @@
-#not_found {
-	// background-color: $not-found-background-color;
-
-	.container {
-		color: #EEE;
-	}
-
+#container {
 	img {
-		border: 5px #28262C solid;
+		max-width: 80%;
+	    margin: 25px auto;
+	    border: 5px solid #FFF;
+	    border-radius: 50%;
+	    border-top-left-radius: 50%;
+	    border-top-right-radius: 50%;
+	    border-bottom-right-radius: 50%;
+	    border-bottom-left-radius: 50%;
+	    box-sizing: border-box;
+	    box-shadow: 5px 5px 10px #111;
 	}
 
-	.button {
-		width: 100px;
-		height: 25px;
-
-		border: 3px #444 solid;
-		border-radius: 5px;
-
-		margin: 10px auto;
-		padding: 5px;
-		padding-top: calc(12.5px - 0.5em);
-		background: url("img/git_bg.png");
-
-		a {
-			color: #333;
-			font-weight: bold;
-			text-decoration: none;
-
-			display: block;
-			margin-top: calc(12px - 0.5em);
-		}
+	a {
+		text-decoration: underline;
 	}
 }

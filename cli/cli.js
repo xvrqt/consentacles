@@ -18,6 +18,7 @@ if(process.env.chalk === 'disabled') {
 const new_cmd = require('./new/new.js');
 const help = require('./help.js');
 const build = require('./build/build.js');
+const serve = require('./serve/serve.js');
 const secret = require('./secret');
 
 /* CONSTANTS */
@@ -83,6 +84,9 @@ switch(command) {
 		break;
 	case 'build':
 		build.run(...args.slice(1));
+		break;
+	case 'serve':
+		serve.run(...args.slice(1));
 		break;
 	case 'version':
 		const version = pkg.version;

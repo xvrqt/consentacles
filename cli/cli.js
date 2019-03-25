@@ -82,7 +82,7 @@ switch(command) {
 		help.run();
 		break;
 	case 'build':
-		build.run();
+		build.run(...args.slice(1));
 		break;
 	case 'version':
 		const version = pkg.version;

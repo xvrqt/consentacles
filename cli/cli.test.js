@@ -15,6 +15,11 @@ const secret = require('./secret.js');
 /* We're testing a binary so we need to run child processes */
 const { spawn } = require('child_process');
 
+const workspace = __dirname;
+beforeAll(() => {
+	process.chdir(workspace);
+});
+
 describe("Exits with an error if unknown command is provided", () => {
 	/* Test EMPTY invocation */
 	test('Exits with error if no command is present', (done) => {

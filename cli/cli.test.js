@@ -4,7 +4,7 @@
 */
 
 /* NPM Package JSON */
-const pkg = require('../package.json');
+const pkg = require(__dirname + '/../package.json');
 /* Linked binary command */
 const cmd = Object.getOwnPropertyNames(pkg.bin)[0];
 
@@ -51,7 +51,6 @@ describe("NEW Command", () => {
 describe("HELP Command", () => {
 	/* Test EMPTY invocation */
 	test('Prints the help text to stdout', (done) => {
-		console.log(cmd);
 		const child = spawn('consentacles', ['help']);
 		let help_text = "";
 		child.stdout.on('data', (chunk) => {
@@ -79,8 +78,8 @@ describe("Version Command", () => {
 			err += chunk.toString();
 		});
 		child.on('exit', (code, signal) => {
-			console.log(version);
 			console.log(err);
+			console.log(process.cwd());
 			expect(code).toBe(0);
 			expect(version.trim()).toMatch(pkg.version.trim());
 			done();
@@ -97,7 +96,6 @@ describe("Secret Command", () => {
 			secret_text += chunk.toString();
 		});
 		child.on('exit', (code, signal) => {
-			console.log(secret_text);
 			expect(code).toBe(0);
 			expect(secret_text.trim()).toBe(secret.text.trim());
 			done();

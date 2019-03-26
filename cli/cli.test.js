@@ -76,7 +76,6 @@ describe("Version Command", () => {
 		});
 		child.on('exit', (code, signal) => {
 			console.log(version);
-			console.log(signal);
 			expect(code).toBe(0);
 			expect(version.trim()).toMatch(pkg.version.trim());
 			done();
@@ -93,6 +92,7 @@ describe("Secret Command", () => {
 			secret_text += chunk.toString();
 		});
 		child.on('exit', (code, signal) => {
+			console.log(secret_text);
 			expect(code).toBe(0);
 			expect(secret_text.trim()).toBe(secret.text.trim());
 			done();

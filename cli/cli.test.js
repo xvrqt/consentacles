@@ -55,7 +55,7 @@ describe("HELP Command", () => {
 		});
 		await child.on('exit', (code, signal) => {
 			expect(code).toBe(0);
-			expect(help_text.trim()).toBe(help.text.trim());
+			expect(help_text.trim()).toMatch(help.text.trim());
  		});
 	});
 
@@ -71,7 +71,7 @@ describe("Version Command", () => {
 		});
 		await child.on('exit', (code, signal) => {
 			expect(code).toBe(0);
-			expect(version.trim()).toBe(pkg.version.trim());
+			expect(version.trim()).toMatch(pkg.version.trim());
  		});
 	});
 });

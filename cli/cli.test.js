@@ -74,8 +74,13 @@ describe("Version Command", () => {
 		child.stdout.on('data', (chunk) => {
 			version += chunk.toString();
 		});
+		let err = "";
+		child.stderr.on('data', (chunk) => {
+			err += chunk.toString();
+		});
 		child.on('exit', (code, signal) => {
 			console.log(version);
+			console.log(err);
 			expect(code).toBe(0);
 			expect(version.trim()).toMatch(pkg.version.trim());
 			done();

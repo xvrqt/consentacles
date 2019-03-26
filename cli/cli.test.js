@@ -17,18 +17,20 @@ const { spawn } = require('child_process');
 
 describe("Exits with an error if unknown command is provided", () => {
 	/* Test EMPTY invocation */
-	test('Exits with error if no command is present', async () => {
+	test('Exits with error if no command is present', (done) => {
 		const child = spawn(cmd);
-		await child.on('exit', (code, signal) => {
+		child.on('exit', (code, signal) => {
 			expect(code).toBe(1);
+			done();
 		});
 	});
 
 	/* Test UNKNOWN invocation */
-	test('Exits with error if unknown command is present', async () => {
+	test('Exits with error if unknown command is present', (done) => {
 		const child = spawn(cmd, ['unknown']);
-		await child.on('exit', (code, signal) => {
+		child.on('exit', (code, signal) => {
 			expect(code).toBe(1);
+			done();
  		});
 	});
 });
@@ -37,25 +39,27 @@ describe("Exits with an error if unknown command is provided", () => {
  * more complex.
 */
 describe("NEW Command", () => {
-	test("Exits with error if the option is unspecified", async () => {
+	test("Exits with error if the option is unspecified", (done) => {
 		const child = spawn(cmd, ['new']);
-		await child.on('exit', (code, signal) => {
+		child.on('exit', (code, signal) => {
 			expect(code).toBe(1);
+			done();
 		});
 	});
 });
 
 describe("HELP Command", () => {
 	/* Test EMPTY invocation */
-	test('Prints the help text to stdout', async () => {
+	test('Prints the help text to stdout', (done) => {
 		const child = spawn(cmd, ['help']);
 		let help_text = "";
 		child.stdout.on('data', (chunk) => {
 			help_text += chunk.toString();
 		});
-		await child.on('exit', (code, signal) => {
+		child.on('exit', (code, signal) => {
 			expect(code).toBe(0);
 			expect(help_text.trim()).toMatch(help.text.trim());
+			done();
  		});
 	});
 
@@ -63,30 +67,32 @@ describe("HELP Command", () => {
 
 describe("Version Command", () => {
 	/* Test EMPTY invocation */
-	test('Prints the version number to stdout', async () => {
+	test('Prints the version number to stdout', (done) => {
 		const child = spawn(cmd, ['version']);
 		let version = "";
 		child.stdout.on('data', (chunk) => {
 			version += chunk.toString();
 		});
-		await child.on('exit', (code, signal) => {
+		child.on('exit', (code, signal) => {
 			expect(code).toBe(0);
 			expect(version.trim()).toMatch(pkg.version.trim());
+			done();
  		});
 	});
 });
 
 describe("Secret Command", () => {
 	/* Test EMPTY invocation */
-	test('Prints the secret to stdout', async () => {
+	test('Prints the secret to stdout', (done) => {
 		const child = spawn(cmd, ['secret']);
 		let secret_text = "";
 		child.stdout.on('data', (chunk) => {
 			secret_text += chunk.toString();
 		});
-		await child.on('exit', (code, signal) => {
+		child.on('exit', (code, signal) => {
 			expect(code).toBe(0);
 			expect(secret_text.trim()).toBe(secret.text.trim());
+			done();
 		});
 	});
 });

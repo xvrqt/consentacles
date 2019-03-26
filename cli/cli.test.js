@@ -51,7 +51,8 @@ describe("NEW Command", () => {
 describe("HELP Command", () => {
 	/* Test EMPTY invocation */
 	test('Prints the help text to stdout', (done) => {
-		const child = spawn(cmd, ['help']);
+		console.log(cmd);
+		const child = spawn('consentacles', ['help']);
 		let help_text = "";
 		child.stdout.on('data', (chunk) => {
 			help_text += chunk.toString();

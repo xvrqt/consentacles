@@ -1,32 +1,19 @@
-Meet **Set** a minimalist framework for building fast web sites and apps.
+Meet **Consentacles** a minimalist framework for building fast web sites and apps.
 
-Set will export your web app using NGINX or Express, optionally Dockerized.
+## Quick Start
+We're only on v0.1.0 so there is a very limited set of fuctions.
 
-Set is for developers that want to build websites and apps without having to conform to particular protocol, but don't want to worry about setting up a toolchain/workspace to convert src/ to dist/
+**Create a new Consentacles project**
+$ consentacles new project <name>
 
-Set is for developers that care about fast initial load times.
+**Build your Consentacles project**
+$ consentacles build
+(you must be inside the Consentacles project directory)
 
-Set is for developers that want to build a website using modern web technologies without having to import a massive framework like Angular, React or Vue.
+**Serve your Consentacles project**
+$ consentacles server (localhost|lan|<address>) (port)
+By default it serves to http://localhost:8080
+If you want to the site from any device in the local area use:
+$ consentacles serve lan
+Or set your own custom address and port if that's how you roll
 
-## Goals
-
-- Easily create new pages and routes with a generator
-- Easily create a new project using templates
-- Easily deploy the finished product
-- Easily integrate other packages
-- Easily test your code
-
-## Technology
-**Web Components:** Generates self container web components, while allowing the the HTML and CSS in separate files.
-**Scripting:** Use either TypeScript of ES6. Compiles down to ES6.
-**Styling:** Use SCSS/SASS or CSS3. Compiles down to CSS3.
-
-## Serving
-Set will provide you with a NGINX conf file to serve a static site, or create a simple Express server to serve it for you. Optionally, these can be Dockerized and Set will provide a Docker file that can be used to build an image that can server your site.
-
-## Options & Flags
-
-- new [project|route|component] <name>
-- help
-- build
-- serve (port)

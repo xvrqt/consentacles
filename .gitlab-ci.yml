@@ -2,7 +2,7 @@ stages:
     - test
     - publish
 
-image: node
+image: node:latest
 
 cache:
   paths:
@@ -15,7 +15,10 @@ test:
   script:
     - npm install
     - npm link
-    - hello
+    - consentacles help
+    - consentacles version
+    - consentacles secret
+    - npm test
 
 publish:
   stage: publish
@@ -24,3 +27,5 @@ publish:
   script:
     - npm install
     - npm run publish
+  only:
+    - tags

@@ -1,0 +1,62 @@
+/* Global styles can be included in this sheet. If you want to break up your 
+ * styles, create SCSS files pre-pended with an '_' in the styles/ directory
+ * and import them here.
+ * 
+ * Styling for individual pages should be reside as siblings to their HTML in 
+ * pages/ directory
+*/
+@import "styles/reset";
+@import "styles/variables";
+
+@import "styles/fonts/mogra/mogra";
+
+html { 
+	height:100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    position: relative;
+
+    z-index: 1;
+
+    /* Deep ocean vibe */
+   	background: radial-gradient(circle, #04619F 0%, #111 95%);
+}
+
+#container {
+	color: $font-color;
+	text-align: center;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+	z-index: 1;
+	position: relative;
+
+	tentacle-image {
+		max-width: 100%;
+		img {
+			max-width: 100%;
+		}
+	}
+
+	h1 {
+		font-size: 40px;
+		text-align: center;
+		font-family: 'Mogra', cursive;
+		text-shadow: 2px 2px rgba(25, 25, 25, 0.5);
+
+		margin: 0 auto;
+	}
+
+	a {
+		color: $font-color;
+		cursor: pointer;
+		text-decoration: none;
+
+		&:visited {
+			color: $font-color;
+		}
+	}
+}

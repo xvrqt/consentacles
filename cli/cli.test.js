@@ -75,6 +75,8 @@ describe("Version Command", () => {
 			version += chunk.toString();
 		});
 		child.on('exit', (code, signal) => {
+			console.log(version);
+			console.log(signal);
 			expect(code).toBe(0);
 			expect(version.trim()).toMatch(pkg.version.trim());
 			done();

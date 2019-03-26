@@ -15,6 +15,9 @@ test:
   script:
     - npm install
     - npm link
+    - consentacles help
+    - consentacles version
+    - consentacles secret
     - npm test
 
 publish:

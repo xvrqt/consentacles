@@ -16,17 +16,17 @@ const workspace = `${__dirname}/test`;
 
 /* Make clean the testing workspace */
 beforeAll(async () => {
-	await new Promise((resolve, reject) => {
-		rimraf(workspace, (error) => {
-			if(error) { reject(); }
-			else {
-				fs.mkdir(workspace, {recursive: true}, (error) => {
-					if(error) { reject(); }
-					else { resolve(); }
-				});
-			}
-		});
-	});
+	// await new Promise((resolve, reject) => {
+	// 	rimraf(workspace, (error) => {
+	// 		if(error) { reject(); }
+	// 		else {
+	// 			fs.mkdir(workspace, {recursive: true}, (error) => {
+	// 				if(error) { reject(); }
+	// 				else { resolve(); }
+	// 			});
+	// 		}
+	// 	});
+	// });
 
 	/* Create and build a new consentacles projext */
 	// await new Promise ((resolve, reject) => {
@@ -47,16 +47,16 @@ beforeAll(async () => {
 
 /* Clean up the directory structure */
 afterAll(async () => {
-	await new Promise((resolve, reject) => {
-		rimraf(workspace, (error) => {
-			if(error) { reject(error); }
-			else { resolve(); }
-		});
-	});
+	// await new Promise((resolve, reject) => {
+	// 	rimraf(workspace, (error) => {
+	// 		if(error) { reject(error); }
+	// 		else { resolve(); }
+	// 	});
+	// });
 });
 
 beforeEach(() => {
-	return process.chdir(workspace);
+	// return process.chdir(workspace);
 });
 
 // describe("Exits with an error if unknown type is provided.", () => {
@@ -80,14 +80,14 @@ beforeEach(() => {
 
 describe("Serve Testing", () => {
 
-	test('Trivial', (done) => {
-		// const child = spawn(cmd, ['build']);
-		// child.on('exit', async (code, signal) => {
-		// 	expect(code).toBe(1);
-		// 	done();
-		// });
-		expect(1).toBe(1);
-		done();
-	});
+	// test('Trivial', (done) => {
+	// 	// const child = spawn(cmd, ['build']);
+	// 	// child.on('exit', async (code, signal) => {
+	// 	// 	expect(code).toBe(1);
+	// 	// 	done();
+	// 	// });
+	// 	expect(1).toBe(1);
+	// 	done();
+	// });
 });
 

@@ -77,7 +77,7 @@ describe("Exits with an error if unknown type is provided.", () => {
 /* New project structure */
 const project = {
 	directories: [
-		"dist",
+		// "dist",
 		"src/components",
 		"src/icons",
 		"src/images",

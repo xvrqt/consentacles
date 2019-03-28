@@ -6,16 +6,17 @@
 const fs = require('fs');
 const pkg = require('../../package.json');
 const rimraf = require('rimraf');
-/* Linked binary command */
+
+/* Linked binary command for Consentacles */
 const cmd = Object.getOwnPropertyNames(pkg.bin)[0];
 
 /* We're testing a binary so we need to run child processes */
 const { spawn } = require('child_process');
-
 const workspace = `${__dirname}/test`;
 
 /* Make clean the testing workspace */
 beforeAll(async () => {
+
 	await new Promise((resolve, reject) => {
 		rimraf(workspace, (error) => {
 			if(error) { reject(); }
@@ -103,6 +104,7 @@ const project = {
 	]
 };
 
+const build_timeout = 60000;
 describe("Build Testing", () => {
 
 	test('Fails to build when not inside a Consentacles project', (done) => {
@@ -111,6 +113,23 @@ describe("Build Testing", () => {
 			expect(code).toBe(1);
 			done();
 		});
-	});
-});
+	}, build_timeout);
 
+	test('Builds when in a Consentacles project', (done) => {
+		process.chdir('foo');
+		const child = spawn(cmd, ['build']);
+		child.on('exit', async (code, signal) => {
+			expect(code).toBe(0);
+			done();
+		});
+	}, build_timeout);
+
+	test('Builds when in a sub-directory of a Consentacles project', (done) => {
+		process.chdir('foo/src/images');
+		const child = spawn(cmd, ['build']);
+		child.on('exit', async (code, signal) => {
+			expect(code).toBe(0);
+			done();
+		});
+	}, build_timeout);
+});

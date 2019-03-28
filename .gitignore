@@ -6,6 +6,7 @@ node_modules/
 
 # Ignore testing modules
 foo/
+tentacle/
 cli/new/test/
 cli/build/test
 cli/serve/test

@@ -1,13 +1,10 @@
 const fs = require('fs');
 const ncp = require('ncp').ncp;
-const pkg = require('../../package.json');
+const pkg = require(__dirname + '/../../package.json');
 const rimraf = require('rimraf');
 
 /* Pretty Colors */
-const chalk = require('chalk');
-if(process.env.chalk === 'disabled') {
-	chalk.enabled = false;
-}
+const log = require(__dirname + '/../logging');
 
 /* CLI input/output */
 // const inquirer = require('inquirer');
@@ -21,20 +18,6 @@ function printTitle(str) {
 	const pkg_name = pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1);
 	const name = str ? str : pkg_name;
 	console.log(chalk.magenta.bold(name));
-}
-
-/* Prints error messages in a standard way */
-function printError(error) {
-	console.log(chalk.bgRed.bold('Error:') + ' ' + chalk.red(error));
-}
-
-function printErrorReason(reason) {
-	console.log(chalk.yellowBright(' - ') + chalk.white(reason));
-}
-
-/* Prints dim text. Useful for additional info */
-function printSubtle(text) {
-	console.log(chalk.dim(text));
 }
 
 /* Wraps mkdir in a promise to make it easier to handle */
@@ -87,8 +70,8 @@ async function project(name) {
 			if(error && error.code === 'ENOENT') {
 				resolve();
 			} else {
-				printError(`Failed to create new ${chalk.magenta('Consentacles')} project.`);
-				printErrorReason(`Directory '${name}' already exists.`);
+				log.printError(`Failed to create new Consentacles project.`);
+				log.printErrorReason(`Directory '${name}' already exists.`);
 				process.exit(1);	
 			}
 		});
@@ -99,8 +82,8 @@ async function project(name) {
 	await new Promise((resolve) => {
 		ncp(source_path, name, {stopOnErr: true}, async (error) => {
 			if(error) {
-				printError(`Failed to create new ${chalk.magenta('Consentacles')} project.`);
-				printErrorReason(error);
+				log.printError(`Failed to create new Consentacles project.`);
+				log.printErrorReason(error);
 
 				/* Clean up */
 				await new Promise((resolve, reject) => {
@@ -125,9 +108,9 @@ function dispatch(type, name) {
 			project(name);
 			break;
 		default:
-			printError('Unrecognized option provided.');
-			printSubtle(`You can use 'new' to create ${types.map((str) => { return str + "s";}).join(', ')}`);
-			printSubtle(`Example: $ consentacles new project foo`);
+			log.printError('Unrecognized option provided.');
+			log.printSubtle(`You can use 'new' to create ${types.map((str) => { return str + "s";}).join(', ')}`);
+			log.printSubtle(`Example: $ consentacles new project foo`);
 			process.exit(1);					
 	}
 }

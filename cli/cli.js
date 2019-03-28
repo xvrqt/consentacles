@@ -6,11 +6,7 @@
 const fs = require('fs');
 const pkg = require('../package.json');
 
-/* Pretty Colors */
-const chalk = require('chalk');
-if(process.env.chalk === 'disabled') {
-	chalk.enabled = false;
-}
+const log = require(__dirname + '/logging');
 
 /************
  * COMMANDS *
@@ -35,23 +31,6 @@ const commands = [
 * HELPER FUNCTIONS *
 ********************/
 
-/* Prints the title of the package */
-function printTitle(str) {
-	const pkg_name = pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1);
-	const name = str ? str : pkg_name;
-	console.log(chalk.magenta.bold(name));
-}
-
-/* Prints error messages in a standard way */
-function printError(error) {
-	console.log(chalk.bgRed.bold('Error:') + ' ' + chalk.red(error));
-}
-
-/* Prints dim text. Useful for additional info */
-function printSubtle(text) {
-	console.log(chalk.dim(text));
-}
-
 /* Returns a file as a string */
 function fileToStr(filename) {
 	fs.readFileSync(filename, 'utf8', (error, data) => {
@@ -69,8 +48,8 @@ const [,, ...args] = process.argv;
 
 /* Check to make sure that an argument was passed */
 if(args.length === 0) {
-	printError('No command provided.');
-	printSubtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
+	log.printError('No command provided.');
+	log.printSubtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
 	process.exit(1);
 }
 
@@ -90,13 +69,13 @@ switch(command) {
 		break;
 	case 'version':
 		const version = pkg.version;
-		console.log(chalk.magenta(version));
+		log.print(`くコ:彡 ${version}`);
 		break;
 	case 'secret':
 		secret.run();
 		break;
 	default:
-		printError('Unknown command provided.');
-		printSubtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
+		log.printError('Unknown command provided.');
+		log.printSubtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
 		process.exit(1);
 }

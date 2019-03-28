@@ -5,27 +5,7 @@ const gulp = require('gulp');
 		     require('./gulpfile.js');
 const findUp = require('find-up');
 
-/* Pretty Colors */
-const chalk = require('chalk');
-if(process.env.chalk === 'disabled') {
-	chalk.enabled = false;
-}
-
-/* Helper Functions */
-
-/* Prints error messages in a standard way */
-function printError(error) {
-	console.log(chalk.bgRed.bold('Error:') + ' ' + chalk.red(error));
-}
-
-function printErrorReason(reason) {
-	console.log(chalk.yellowBright(' - ') + chalk.white(reason));
-}
-
-/* Prints dim text. Useful for additional info */
-function printSubtle(text) {
-	console.log(chalk.dim(text));
-}
+const log = require(__dirname + '/../logging');
 
 function buildAll() {
 	const package_path = findUp.sync('package.json');
@@ -35,8 +15,8 @@ function buildAll() {
 	try {
 		file = fs.readFileSync(package_path, 'utf8');
 	} catch(error) {
-		printError(`Failed to build`);
-		printErrorReason(`Could not find package.json.`);
+		log.printError(`Failed to build`);
+		log.printErrorReason(`Could not find package.json.`);
 		process.exit(1);
 	}
 
@@ -44,14 +24,14 @@ function buildAll() {
 	try {
 		package = JSON.parse(file);
 	} catch(error) {
-		printError(`Failed to build`);
-		printErrorReason(`Could not parse package.json.`);
+		log.printError(`Failed to build`);
+		log.printErrorReason(`Could not parse package.json.`);
 		process.exit(1);
 	}
 
 	if(!package.hasOwnProperty('consentacles')) {
-		printError(`Failed to build.`);
-		printErrorReason(`Working directory does not appear to belong to a ${chalk.magenta('Consentacles')} project.`);
+		log.printError(`Failed to build.`);
+		log.printErrorReason(`Working directory does not appear to belong to a Consentacles project.`);
 		process.exit(1);
 	}
 	const user_settings = package.consentacles;
@@ -76,9 +56,9 @@ function dispatch(type, name) {
 				console.log('Not yet implemented');
 				break;
 			default:
-				printError('Unrecognized option provided.');
-				// printSubtle(`You can use 'new' to create ${types.map((str) => { return str + "s";}).join(', ')}`);
-				printSubtle(`Example: $ consentacles new project foo`);
+				log.printError('Unrecognized option provided.');
+				// log.printSubtle(`You can use 'new' to create ${types.map((str) => { return str + "s";}).join(', ')}`);
+				log.printSubtle(`Example: $ consentacles new project foo`);
 				process.exit(1);					
 		}
 	}

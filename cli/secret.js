@@ -2,12 +2,6 @@
  * trivial function to print it.
 */
 
-/* Pretty Colors */
-const chalk = require('chalk');
-if(process.env.chalk === 'disabled') {
-    chalk.enabled = false;
-}
-
 const secret_text = `
 
           ,'""\`.         ▄████▄   ▒█████   ███▄    █   ██████ ▓█████  ███▄    █ ▄▄▄█████▓ ▄▄▄       ▄████▄   ██▓    ▓█████   ██████ 

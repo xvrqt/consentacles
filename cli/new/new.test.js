@@ -50,7 +50,7 @@ function fileExists(name) {
 	return new Promise((resolve, reject) => {
 		fs.access(name, (error) => {
 			if(error) { reject(error); }
-			else { resolve();}
+			else { resolve(true); }
 		});
 	});
 }
@@ -143,3 +143,115 @@ describe("Project Testing", () => {
 	});
 });
 
+describe("Page Testing", () => {
+
+	/* Create a project that we can test on */
+	beforeAll((done) => {
+		const child = spawn(cmd, ['new', 'project', 'test_pages']);
+		child.on('exit', async (code, signal) => {
+			done();
+		});
+	});
+
+	beforeEach(() => {
+		return process.chdir(workspace + '/test_pages');
+	});
+
+	test('Fails to create a page if not in a Consentacles project', (done) => {
+		process.chdir(workspace);
+		const child = spawn(cmd, ['new', 'page']);
+		child.on('exit', async (code, signal) => {
+			expect(code).toBe(1);
+			done();
+		});
+	});
+
+	test('Fails to create a page if no name is provided', (done) => {
+		const child = spawn(cmd, ['new', 'page']);
+		child.on('exit', async (code, signal) => {
+			expect(code).toBe(1);
+			done();
+		});
+	});
+
+	describe("Creates a page with the name 'bar'", () => {
+
+		test('Creates the page', (done) => {
+			const child = spawn(cmd, ['new', 'page', 'bar']);
+			child.on('exit', async (code, signal) => {
+				expect(code).toBe(0);
+				let created = await fileExists('./src/pages/bar').catch((error) => {
+					expect(error).toBeNull();
+					console.log(error);
+					done();
+				});
+				expect(created).toBeTruthy();
+				done();
+			});
+		});
+
+		test('Will not create a page if a page with the same name already exists', (done) => {
+			const child = spawn(cmd, ['new', 'page', 'bar']);
+			child.on('exit', (code, signal) => {
+				expect(code).toBe(1);
+				done();
+			});
+		});
+
+		test('Created the expected files', () => {
+			const path = `./src/pages/bar/`;
+			const file_types = ['html', 'scss', 'ts'];
+			const file_exists = [];
+			file_types.forEach((ext, index) => {
+				const filename = (ext === 'html') ? `${path}index.html` : `${path}bar.${ext}`;
+				file_exists.push(fileExists(filename));
+			});
+			return Promise.all(file_exists);
+		});
+	});
+
+	describe("Creates a sub-page with the name 'bar/vim'", () => {
+
+		test('Creates the page', (done) => {
+			const child = spawn(cmd, ['new', 'page', 'bar/vim']);
+			child.on('exit', async (code, signal) => {
+				expect(code).toBe(0);
+				let created = await fileExists('./src/pages/bar/vim').catch((error) => {
+					expect(error).toBeNull();
+					console.log(error);
+					done();
+				});
+				expect(created).toBeTruthy();
+				done();
+			});
+		});
+
+		test('Will not create a page if a page with the same name already exists', (done) => {
+			const child = spawn(cmd, ['new', 'page', 'bar/vim']);
+			child.on('exit', (code, signal) => {
+				expect(code).toBe(1);
+				done();
+			});
+		});
+
+		test('Created the expected files', () => {
+			const path = `./src/pages/bar/vim/`;
+			const file_types = ['html', 'scss', 'ts'];
+			const file_exists = [];
+			file_types.forEach((ext, index) => {
+				const filename = (ext === 'html') ? `${path}index.html` : `${path}vim.${ext}`;
+				file_exists.push(fileExists(filename));
+			});
+			return Promise.all(file_exists);
+		});
+	});
+
+	build_timeout = 60000;
+	test('Builds correctly after creating new pages', (done) => {
+		const child = spawn(cmd, ['build']);
+		child.on('exit', async (code, signal) => {
+			expect(code).toBe(0);
+			done();
+		});
+	}, build_timeout);
+});

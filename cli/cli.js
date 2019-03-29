@@ -27,22 +27,6 @@ const commands = [
 	"secret"
 ];
 
-/*******************
-* HELPER FUNCTIONS *
-********************/
-
-/* Returns a file as a string */
-function fileToStr(filename) {
-	fs.readFileSync(filename, 'utf8', (error, data) => {
-		if(error) {
-			console.log(`Error: ${error}`);
-			process.exit(1);
-		} else {
-			return data;
-		}
-	});
-}
-
 /* Grab the args */
 const [,, ...args] = process.argv;
 
@@ -54,6 +38,7 @@ if(args.length === 0) {
 }
 
 const command = args[0];
+
 switch(command) {
 	case 'new':
 		new_cmd.run(...args.slice(1));

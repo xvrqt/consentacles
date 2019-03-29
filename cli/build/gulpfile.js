@@ -118,10 +118,17 @@ function minifyHTML(glob) {
 /* Transpile SCSS */
 const sass = require("gulp-sass");
 
+const sass_options = {
+    outputStyle: 'compressed',
+    includePaths: [
+        `./${src}/styles/**/*.scss`
+    ]
+};
+
 const clean_css_config = {
     inline: ['all'],
     level: 2
-}
+};
 
 /* Transpiles SCSS to CSS
  * REQ: Stream of CSS files as Vinyl objects

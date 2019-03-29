@@ -65,8 +65,8 @@ async function project(name) {
 			if(error && error.code === 'ENOENT') {
 				resolve();
 			} else {
-				log.printError(`Failed to create new Consentacles project.`);
-				log.printErrorReason(`Directory '${name}' already exists.`);
+				log.error(`Failed to create new Consentacles project.`);
+				log.list(`Directory '${name}' already exists.`);
 				process.exit(1);	
 			}
 		});
@@ -77,8 +77,8 @@ async function project(name) {
 	await new Promise((resolve) => {
 		ncp(source_path, name, {stopOnErr: true}, async (error) => {
 			if(error) {
-				log.printError(`Failed to create new Consentacles project.`);
-				log.printErrorReason(error);
+				log.error(`Failed to create new Consentacles project.`);
+				log.list(error);
 
 				/* Clean up */
 				await new Promise((resolve, reject) => {
@@ -99,9 +99,9 @@ async function page(name) {
 	/* Parameter checking */
 	const error_header = `Failed to create a new page`;
 	if(name === undefined) {
-		log.printError(error_header);
-		log.printErrorReason(`No page name provided.`);
-		log.printSubtle(`Usage: $ consentacles new page <name>`);
+		log.error(error_header);
+		log.list(`No page name provided.`);
+		log.subtle(`Usage: $ consentacles new page <name>`);
 		process.exit(1);
 	}
 
@@ -117,14 +117,14 @@ async function page(name) {
 				/* Create the directory */
 				fs.mkdir(new_page_path, {recursive: true}, (error) => {
 					if(error) {
-						log.printError(error_header);
-						log.printErrorReason(`Failed to create directory: ${new_page_path}`);
+						log.error(error_header);
+						log.list(`Failed to create directory: ${new_page_path}`);
 						process.exit(1);
 					} else { resolve(); }
 				});
 			} else {
-				log.printError(error_header);
-				log.printErrorReason(`Page '${name}' already exists.`);
+				log.error(error_header);
+				log.list(`Page '${name}' already exists.`);
 				process.exit(1);	
 			}
 		});
@@ -169,8 +169,8 @@ async function page(name) {
 		}));
 	});
 	await Promise.all(files_updated).catch(() => {
-		log.printError(error_header);
-		log.printErrorReason(`Failed to create the new page files.`);
+		log.error(error_header);
+		log.list(`Failed to create the new page files.`);
 		process.exit(1);
 	});
 }
@@ -187,9 +187,9 @@ function dispatch(type, name) {
 			page(name);
 			break;
 		default:
-			log.printError('Unrecognized option provided.');
-			log.printSubtle(`You can use 'new' to create ${types.map((str) => { return str + "s";}).join(', ')}`);
-			log.printSubtle(`Example: $ consentacles new project <name>`);
+			log.error('Unrecognized option provided.');
+			log.subtle(`You can use 'new' to create ${types.map((str) => { return str + "s";}).join(', ')}`);
+			log.subtle(`Example: $ consentacles new project <name>`);
 			process.exit(1);					
 	}
 }

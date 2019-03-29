@@ -33,9 +33,9 @@ function dispatch(type, name) {
 				console.log('Not yet implemented');
 				break;
 			default:
-				log.printError('Unrecognized option provided.');
+				log.error('Unrecognized option provided.');
 				// log.printSubtle(`You can use 'new' to create ${types.map((str) => { return str + "s";}).join(', ')}`);
-				log.printSubtle(`Example: $ consentacles new project foo`);
+				log.subtle(`Example: $ consentacles new project foo`);
 				process.exit(1);					
 		}
 	}

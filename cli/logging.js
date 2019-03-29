@@ -43,7 +43,7 @@ module.exports = {
 	pkg_name: pkg_name,
 	
 	print: print,
-	printError: printError,
-	printErrorReason: printErrorReason,
-	printSubtle: printSubtle
+	error: printError,
+	list: printErrorReason,
+	subtle: printSubtle
 }

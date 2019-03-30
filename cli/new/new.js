@@ -1,5 +1,4 @@
-const fs = require('fs');
-const ncp = require('ncp').ncp;
+const fs = require('fs-extra');
 const pkg = require(__dirname + '/../../package.json');
 const rimraf = require('rimraf');
 const stache = require('mustache');
@@ -58,38 +57,80 @@ const defaults = {
 /* Project Route */
 async function project(name) {
 	name = name ? name : defaults.project.name;
-
+	const error_header = `Failed to create new Consentacles project.`;
+	
 	/* Check to see if the directory already exists */
 	await new Promise((resolve, reject) => {
 		fs.access(name, (error) => {
 			if(error && error.code === 'ENOENT') {
 				resolve();
 			} else {
-				log.error(`Failed to create new Consentacles project.`);
+				log.error(error_header);
 				log.list(`Directory '${name}' already exists.`);
 				process.exit(1);	
 			}
 		});
 	});
 
+	/* Pre-create all the directories because in some environments, empty
+	 * directories are not created.
+	*/
+	const directories = [
+		"dist",
+		"src/components",
+		"src/icons",
+		"src/images",
+		"src/meta",
+		"src/pages",
+		"src/scripts",
+		"src/styles"
+	];
+	directories.forEach((dir, index) => {
+		try { fs.emptyDirSync(`${name}/${dir}`); }
+		catch(error) { 
+			log.error(error_header);
+			log.list(`Could not create ${name}/${dir}`);
+			fs.removeSync(name);
+			process.exit(1);
+		}
+	});
+
 	/* Copy the base files for an empty new project from source_files */
-	source_path = `${__dirname}/source_files/project`;
-	await new Promise((resolve) => {
-		ncp(source_path, name, {stopOnErr: true}, async (error) => {
-			if(error) {
-				log.error(`Failed to create new Consentacles project.`);
-				log.list(error);
+	source_path = `${__dirname}/source_files/template/blank`;
+	try {
+		fs.copySync(source_path, name, {});
+	} catch(error) {
+		log.error(error_header);
+		log.list(error.message);
+		fs.removeSync(name);
+		process.exit(1);
+	}
+	process.chdir(name);
 
-				/* Clean up */
-				await new Promise((resolve, reject) => {
-					rimraf(workspace, (error) => {
-						if(error) { reject(error); }
-						else { resolve(); }
-					});
-				});
+	/* Run all the files through Mustaches to customize them a bit */
+	const view_data = {
+		name: name
+	};
+	const stache_files = [
+		'index.html'
+	];
+	stache_files.forEach((file, index) => {
+		const filename = `src/${file}`;
+		let data = fs.readFileSync(filename, 'utf8');
+		data = stache.render(data, view_data);
+		fs.writeFileSync(filename, data);
+	});
 
-				process.exit(1);
-			} else { resolve(); }
+	/* Update the package.json with the name */
+	const {project, project_root} = util.inConsentaclesProject(error_header);
+	project['consentacles']['name'] = name;
+
+	const out_file = `${project_root}/package.json`;
+	const data = JSON.stringify(project, null, 4);
+	await new Promise((resolve, reject) => {
+		fs.writeFile(out_file, data, (error) => {
+			if(error) { reject(); }
+			else { resolve(); }
 		});
 	});
 }

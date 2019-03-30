@@ -1,0 +1,14 @@
+{
+    "name": "test_pages",
+    "version": "1.0.1",
+    "description": "My Consentacles web project",
+    "scripts": {},
+    "keywords": [
+        "typescript",
+        "scss",
+        "consentacles"
+    ],
+    "author": "xvrqt",
+    "license": "BSD-3-Clause",
+    "consentacles": {}
+}

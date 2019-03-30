@@ -1,0 +1,1 @@
+/* Main script imported by every page */

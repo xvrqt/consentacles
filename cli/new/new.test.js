@@ -140,6 +140,12 @@ describe("Project Testing", () => {
 				return Promise.all(file_exists);
 			});
 		});
+
+		test('package.json has been updated correctly', () => {
+			process.chdir('foo');
+			const pkg = JSON.parse(fs.readFileSync('package.json'));
+			expect(pkg.consentacles.name).toMatch('foo');
+		});
 	});
 });
 
@@ -147,6 +153,7 @@ describe("Page Testing", () => {
 
 	/* Create a project that we can test on */
 	beforeAll((done) => {
+		process.chdir(workspace);
 		const child = spawn(cmd, ['new', 'project', 'test_pages']);
 		child.on('exit', async (code, signal) => {
 			done();

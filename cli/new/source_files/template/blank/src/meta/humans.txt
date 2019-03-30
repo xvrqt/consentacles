@@ -1,0 +1,13 @@
+# humanstxt.org
+
+# TEAM
+
+    <name> -- <role> -- <twitter>
+
+# THANKS
+	
+	<name> - @<handle>
+
+# TECHNOLOGY
+
+    CSS3, DOCKER, HTML5, NGINX, NODEJS, NPM, SCSS, TYPESCRIPT

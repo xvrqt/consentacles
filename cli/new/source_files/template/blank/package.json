@@ -6,11 +6,11 @@
   },
   "keywords": [
     "typescript",
-    "scss"
+    "scss",
+    "consentacles"
   ],
   "author": "xvrqt",
   "license": "BSD-3-Clause",
   "consentacles": {
-
   }
 }

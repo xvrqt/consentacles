@@ -307,68 +307,153 @@ describe("Component Testing", () => {
 		});
 	});
 
-	describe("Creates a component with the name 'baz'", () => {
+	describe("Project Components", () => {
 		beforeEach(() => {
-			process.chdir(workspace);
+			process.chdir(workspace + '/test_components');
 		});
-		
-		const component_name = 'baz';
-		test('Creates the component', (done) => {
-			const child = spawn(cmd, ['new', 'component', component_name]);
-			child.on('exit', async (code, signal) => {
-				expect(code).toBe(0);
-				expect(fs.pathExistsSync(`./${component_name}`)).toBeTruthy();
-				done();
+
+		describe("Creates component with the name 'baz'", () => {
+
+			const component_name = 'baz';
+			test('Creates the component', (done) => {
+				const child = spawn(cmd, ['new', 'component', component_name]);
+				child.on('exit', async (code, signal) => {
+					expect(code).toBe(0);
+					expect(fs.pathExistsSync(`./src/components/${component_name}`)).toBeTruthy();
+					done();
+				});
+			});
+
+			test('Will not create a page if a page with the same name already exists', (done) => {
+				const child = spawn(cmd, ['new', 'component', component_name]);
+				child.on('exit', (code, signal) => {
+					expect(code).toBe(1);
+					done();
+				});
+			});
+
+			test('Created the expected files', () => {
+				const path = `${workspace}/test_components/src/components/${component_name}`;
+				const file_types = ['html', 'scss', 'ts'];
+				file_types.forEach((ext, index) => {
+					const filename = `${path}/${component_name}.${ext}`;
+					expect(fs.pathExistsSync(filename)).toBeTruthy();
+				});
 			});
 		});
 
-		test('Will not create a page if a page with the same name already exists', (done) => {
-			const child = spawn(cmd, ['new', 'component', component_name]);
-			child.on('exit', (code, signal) => {
-				expect(code).toBe(1);
-				done();
-			});
-		});
+		describe("Creates component with the name 'gay/girls'", () => {
 
-		test('Created the expected files', () => {
-			const path = `${workspace}/${component_name}/src/`;
-			const file_types = ['html', 'scss', 'ts'];
-			file_types.forEach((ext, index) => {
-				const filename = `${path}${component_name}.${ext}`;
-				console.log(filename);
-				expect(fs.pathExistsSync(filename)).toBeTruthy();
+			const component_name = 'gay/girls';
+			test('Creates the component', (done) => {
+				const child = spawn(cmd, ['new', 'component', component_name]);
+				child.on('exit', async (code, signal) => {
+					expect(code).toBe(0);
+					expect(fs.pathExistsSync(`./src/components/${component_name}`)).toBeTruthy();
+					done();
+				});
+			});
+
+			test('Will not create a page if a page with the same name already exists', (done) => {
+				const child = spawn(cmd, ['new', 'component', component_name]);
+				child.on('exit', (code, signal) => {
+					expect(code).toBe(1);
+					done();
+				});
+			});
+
+			test('Created the expected files', () => {
+				const path = `${workspace}/test_components/src/components/${component_name}`;
+				const file_types = ['html', 'scss', 'ts'];
+				file_types.forEach((ext, index) => {
+					const filename = `${path}/${component_name}.${ext}`;
+					expect(fs.pathExistsSync(filename)).toBeTruthy();
+				});
 			});
 		});
 	});
 
-	// describe("Creates a sub-page with the name 'bar/vim'", () => {
+	describe("Independent Components", () => {
+		beforeEach(() => {
+			process.chdir(workspace);
+		});
 
-	// 	test('Creates the page', (done) => {
-	// 		const child = spawn(cmd, ['new', 'page', 'bar/vim']);
-	// 		child.on('exit', async (code, signal) => {
-	// 			expect(code).toBe(0);
-	// 			expect(fs.pathExistsSync('./src/pages/bar/vim')).toBeTruthy();
-	// 			done();
-	// 		});
-	// 	});
+		describe("Creates component with the name 'baz'", () => {
 
-	// 	test('Will not create a page if a page with the same name already exists', (done) => {
-	// 		const child = spawn(cmd, ['new', 'page', 'bar/vim']);
-	// 		child.on('exit', (code, signal) => {
-	// 			expect(code).toBe(1);
-	// 			done();
-	// 		});
-	// 	});
+			const component_name = 'baz';
+			test('Creates the component', (done) => {
+				const child = spawn(cmd, ['new', 'component', component_name]);
+				child.on('exit', async (code, signal) => {
+					expect(code).toBe(0);
+					expect(fs.pathExistsSync(`./${component_name}`)).toBeTruthy();
+					done();
+				});
+			});
 
-	// 	test('Created the expected files', () => {
-	// 		const path = `${workspace}/test_pages/src/pages/bar/vim/`;
-	// 		const file_types = ['html', 'scss', 'ts'];
-	// 		file_types.forEach((ext, index) => {
-	// 			const filename = (ext === 'html') ? `${path}index.html` : `${path}vim.${ext}`;
-	// 			expect(fs.pathExistsSync(filename)).toBeTruthy();
-	// 		});
-	// 	});
-	// });
+			test('Will not create a page if a page with the same name already exists', (done) => {
+				const child = spawn(cmd, ['new', 'component', component_name]);
+				child.on('exit', (code, signal) => {
+					expect(code).toBe(1);
+					done();
+				});
+			});
+
+			test('Creates the expected directories', () => {
+				const path = `${workspace}/${component_name}/`;
+				const dirs = ['dist', 'src'];
+				dirs.forEach((dir) => {
+					expect(fs.pathExistsSync(`${path}${dir}`)).toBeTruthy();
+				});
+			});
+
+			test('Created the expected files', () => {
+				const path = `${workspace}/${component_name}/src/`;
+				const file_types = ['html', 'scss', 'ts'];
+				file_types.forEach((ext, index) => {
+					const filename = `${path}${component_name}.${ext}`;
+					expect(fs.pathExistsSync(filename)).toBeTruthy();
+				});
+			});
+		});
+
+		describe("Creates component with the name 'gay/girls'", () => {
+
+			const component_name = 'gay/girls';
+			test('Creates the component', (done) => {
+				const child = spawn(cmd, ['new', 'component', component_name]);
+				child.on('exit', async (code, signal) => {
+					expect(code).toBe(0);
+					expect(fs.pathExistsSync(`./${component_name}`)).toBeTruthy();
+					done();
+				});
+			});
+
+			test('Will not create a page if a page with the same name already exists', (done) => {
+				const child = spawn(cmd, ['new', 'component', component_name]);
+				child.on('exit', (code, signal) => {
+					expect(code).toBe(1);
+					done();
+				});
+			});
+
+			test('Creates the expected directories', () => {
+				const path = `${workspace}/${component_name}/`;
+				const dirs = ['dist', 'src'];
+				dirs.forEach((dir) => {
+					expect(fs.pathExistsSync(`${path}${dir}`)).toBeTruthy();
+				});
+			});
+
+			test('Created the expected files', () => {
+				const path = `${workspace}/${component_name}/src/`;
+				const file_types = ['html', 'scss', 'ts'];
+				file_types.forEach((ext, index) => {
+					const filename = `${path}${component_name}.${ext}`;
+					expect(fs.pathExistsSync(filename)).toBeTruthy();
+				});
+			});
+		});
+	});
 
 	// build_timeout = 60000;
 	// test('Builds correctly after creating new pages', (done) => {

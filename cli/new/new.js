@@ -267,7 +267,7 @@ function component(name) {
 	}
 
 	/* Set up paths */
-	const component_path = in_consentacles_project ? `${project_root}/src/component` : `${name}`;
+	const component_path = in_consentacles_project ? `${project_root}/src/components` : `${name}`;
 	const new_component_path = in_consentacles_project ? `${component_path}/${name}` : `${name}/src`;
 
 	/* Check to see if the path already exists */
@@ -289,22 +289,41 @@ function component(name) {
 		throw new CError(null, error_header, [`Failed to create directory: ${new_component_path}`], [], []);
 	}
 
+	/* Create an empty dist/ directory */
+	if(!in_consentacles_project) {
+		try {
+			fs.emptyDirSync(name + '/dist');
+		} catch(error) {
+			throw new CError(null, error_header, [`Failed to create directory: ${name + '/dist'}`], [], []);
+		}
+	}
+
 	/* Assemble the data object for Mustache templating */
 	/* i.e. foo/bar/baz -> baz */
-	const prettyName = name.split('\\').pop().split('/').pop();
+	const pretty_name = name.split('\\').pop().split('/').pop();
+	/* ClassNamesAreCamelCase */
+	let humps = pretty_name.split('-');
+	let class_name = "";
+	humps.forEach((val) => {
+		class_name += (val.charAt(0).toUpperCase() + val.slice(1));
+	});
+	/* Custom elements must be hyphenated */
+	const element_name = (pretty_name.split('-').length) > 1 ? pretty_name : 'cce-' + pretty_name;
 
 	/* Update the Consentacles settings */
 	if(in_consentacles_project) {
 		
 		const settings = project.consentacles;
-		if(!settings.hasOwnProperty(components)) {
-			settings.components.push({
-				name: prettyName,
-				location: 'local'
-			});
-		} else {
-
+		if(!settings.hasOwnProperty('components')) {
+			settings['components'] = [];
 		}
+
+		settings.components.push({
+			name: pretty_name,
+			class_name: class_name,
+			element_name: element_name,
+			location: 'local'
+		});
 	
 		const filename = `${project_root}/package.json`;
 		try {
@@ -316,7 +335,9 @@ function component(name) {
 
 	/* Mustache Object */
 	const view_data = {
-		name: prettyName
+		name: pretty_name,
+		class_name: class_name,
+		element_name: element_name
 	};
 
 	/* Copy & Customize each constituent page file */

@@ -1,6 +1,6 @@
 /* {{ name }} Web Component */
 
-export class {{ name }} extends HTMLElement {
+export class {{ class_name }} extends HTMLElement {
     /* Interface */
     private _hello = "girls!";
 
@@ -21,11 +21,11 @@ export class {{ name }} extends HTMLElement {
 
         /* Add Styling */
         const style = document.createElement('style');
-        style.innerHTML = {{ name }}.styles;
+        style.innerHTML = {{ class_name }}.styles;
         this.shadow.appendChild(style);
 
         /* Add HTML */
-        this.shadow.insertAdjacentHTML('beforeend', {{ name }}.html);
+        this.shadow.insertAdjacentHTML('beforeend', {{ class_name }}.html);
     }
 
     /* Called each time the element is connected to the document */
@@ -75,7 +75,7 @@ export class {{ name }} extends HTMLElement {
 
 /* Self register the element */
 try {
-    window.customElements.define("{{ name }}", {{ name }});
+    window.customElements.define("{{ element_name }}", {{ class_name }});
 } catch(e) {
-    console.warn(`Custom Element {{ name }} already registered`);
+    console.warn(`Custom Element {{ element_name }} already registered`);
 }

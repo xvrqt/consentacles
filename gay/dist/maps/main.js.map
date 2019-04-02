@@ -1,0 +1,1 @@
+{"version":3,"sources":["main.ts"],"names":["helloConsentacles"],"mappings":"4BACSA,MAAyB,uBAGlCA","file":"../main.js","sourcesContent":["/* Primary script imported by all pages by default */\nimport { helloConsentacles } from './scripts/example.js';\n\n/* Print a lovely message to the console on load */\nhelloConsentacles();\n"]}

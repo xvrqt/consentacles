@@ -36,7 +36,7 @@ class ConsentacleError {
 			});
 		}
 
-		if(error) {
+		if(this.error) {
 			log.additionalError(error);
 		}
 	}

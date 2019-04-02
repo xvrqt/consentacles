@@ -21,14 +21,16 @@ const types = [
 const defaults = {
 	project: {
 		name: "tentacle",
+		template: 'blank',
 		server: null,
 		dockerize: null
 	}
 };
 
 /* Project Route */
-function project(name) {
+function project(template, name) {
 	name = name ? name : defaults.project.name;
+	template = template ? template : defaults.project.template;
 	const error_header = `Failed to create new Consentacles project.`;
 
 	/* Check to see if the directory already exists */
@@ -63,7 +65,28 @@ function project(name) {
 	});
 
 	/* Copy the base files for an empty new project from source_files */
-	source_path = `${__dirname}/source_files/template/blank`;
+	let source_path;
+	const template_path = `${__dirname}/source_files/template`;
+	const templates = [
+		`demo`,
+		`blank`
+	];
+	switch (template) {
+		case 'blank':
+			source_path = `${template_path}/blank`;
+			break;
+		case 'demo':
+			source_path = `${template_path}/demo`;
+			break;
+		default:
+			const sublties = [
+				`You can specify these templates for your project: ${templates.map((str) => { return str + "s";}).join(', ')}`, 
+				`Example: $ consentacles new project <template> <name>`,
+				`You can also skipe the template parameter. This defaults to a blank template`,
+				`Example: $ consentacles new project <name>`
+			];
+			throw new CError(null, error_header, [`Could not find the ${template} template`], sublties, [name]);
+	}
 	try {
 		fs.copySync(source_path, name, {});
 	} catch(error) {
@@ -198,12 +221,14 @@ function page(name) {
 /* 'new' can create many things, this function hands off control to the correct
  * sub-module to make those things happen.
 */
-function dispatch(type, name) {
+function dispatch(type, template, name) {
 	switch (type) {
 		case 'project':
-			project(name);
+			if(name === undefined) { name = template; template = undefined; }
+			project(template, name);
 			break;
 		case 'page':
+			name = template;
 			page(name);
 			break;
 		default:

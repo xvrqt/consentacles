@@ -455,12 +455,13 @@ describe("Component Testing", () => {
 		});
 	});
 
-	// build_timeout = 60000;
-	// test('Builds correctly after creating new pages', (done) => {
-	// 	const child = spawn(cmd, ['build']);
-	// 	child.on('exit', async (code, signal) => {
-	// 		expect(code).toBe(0);
-	// 		done();
-	// 	});
-	// }, build_timeout);
+	build_timeout = 60000;
+	test('Builds correctly after creating new components', (done) => {
+		process.chdir(workspace + '/test_components');
+		const child = spawn(cmd, ['build']);
+		child.on('exit', async (code, signal) => {
+			expect(code).toBe(0);
+			done();
+		});
+	}, build_timeout);
 });

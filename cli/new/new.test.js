@@ -281,3 +281,101 @@ describe("Page Testing", () => {
 		});
 	}, build_timeout);
 });
+
+describe("Component Testing", () => {
+
+	/* Create a project that we can test on */
+	beforeAll((done) => {
+		process.chdir(workspace);
+		const child = spawn(cmd, ['new', 'project', 'test_components']);
+		child.stdin.setEncoding('utf-8');
+		child.stdin.write('http://example.com\n');
+		child.on('exit', async (code, signal) => {
+			done();
+		});
+	});
+
+	beforeEach(() => {
+		process.chdir(workspace + '/test_components');
+	});
+
+	test('Fails to create a component if no name is provided', (done) => {
+		const child = spawn(cmd, ['new', 'page']);
+		child.on('exit', async (code, signal) => {
+			expect(code).toBe(1);
+			done();
+		});
+	});
+
+	describe("Creates a component with the name 'baz'", () => {
+		beforeEach(() => {
+			process.chdir(workspace);
+		});
+		
+		const component_name = 'baz';
+		test('Creates the component', (done) => {
+			const child = spawn(cmd, ['new', 'component', component_name]);
+			child.on('exit', async (code, signal) => {
+				expect(code).toBe(0);
+				expect(fs.pathExistsSync(`./${component_name}`)).toBeTruthy();
+				done();
+			});
+		});
+
+		test('Will not create a page if a page with the same name already exists', (done) => {
+			const child = spawn(cmd, ['new', 'component', component_name]);
+			child.on('exit', (code, signal) => {
+				expect(code).toBe(1);
+				done();
+			});
+		});
+
+		test('Created the expected files', () => {
+			const path = `${workspace}/${component_name}/src/`;
+			const file_types = ['html', 'scss', 'ts'];
+			file_types.forEach((ext, index) => {
+				const filename = `${path}${component_name}.${ext}`;
+				console.log(filename);
+				expect(fs.pathExistsSync(filename)).toBeTruthy();
+			});
+		});
+	});
+
+	// describe("Creates a sub-page with the name 'bar/vim'", () => {
+
+	// 	test('Creates the page', (done) => {
+	// 		const child = spawn(cmd, ['new', 'page', 'bar/vim']);
+	// 		child.on('exit', async (code, signal) => {
+	// 			expect(code).toBe(0);
+	// 			expect(fs.pathExistsSync('./src/pages/bar/vim')).toBeTruthy();
+	// 			done();
+	// 		});
+	// 	});
+
+	// 	test('Will not create a page if a page with the same name already exists', (done) => {
+	// 		const child = spawn(cmd, ['new', 'page', 'bar/vim']);
+	// 		child.on('exit', (code, signal) => {
+	// 			expect(code).toBe(1);
+	// 			done();
+	// 		});
+	// 	});
+
+	// 	test('Created the expected files', () => {
+	// 		const path = `${workspace}/test_pages/src/pages/bar/vim/`;
+	// 		const file_types = ['html', 'scss', 'ts'];
+	// 		file_types.forEach((ext, index) => {
+	// 			const filename = (ext === 'html') ? `${path}index.html` : `${path}vim.${ext}`;
+	// 			expect(fs.pathExistsSync(filename)).toBeTruthy();
+	// 		});
+	// 	});
+	// });
+
+	// build_timeout = 60000;
+	// test('Builds correctly after creating new pages', (done) => {
+	// 	const child = spawn(cmd, ['build']);
+	// 	child.on('exit', async (code, signal) => {
+	// 		expect(code).toBe(0);
+	// 		done();
+	// 	});
+	// }, build_timeout);
+});

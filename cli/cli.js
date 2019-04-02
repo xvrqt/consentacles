@@ -51,7 +51,7 @@ switch(command) {
 	case 'build':
 		try {
 			build.run(...args.slice(1));
-		} catch(e) { console.log(e);e.pce(); }
+		} catch(e) { e.pce(); }
 		break;
 	case 'serve':
 		serve.run(...args.slice(1));

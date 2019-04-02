@@ -237,6 +237,113 @@ function page(name) {
 	});
 }
 
+/* Component Route */
+function component(name) {
+	/* Check that we're in a Consentacles project, setup error handling */
+	const error_header = `Failed to create a new component`;
+	let in_consentacles_project = true;
+
+	/* Parameter checking */
+	if(name === undefined) {
+		throw new CError(null, error_header, [`No component name provided.`], [`Usage: $ consentacles new component <name>`], []);
+	}
+
+	let project;
+	try {
+		project = util.parsePackage();
+	} catch(cerror) {
+		in_consentacles_project = false;
+	}
+
+	/* Determine the project's root */
+	let project_root = name;
+	if(in_consentacles_project) {
+		try {
+			project_root = util.getProjectRoot();
+		} catch(cerror) {
+			cerror.header = error_header;
+			throw cerror;
+		}
+	}
+
+	/* Set up paths */
+	const component_path = in_consentacles_project ? `${project_root}/src/component` : `${name}`;
+	const new_component_path = in_consentacles_project ? `${component_path}/${name}` : `${name}/src`;
+
+	/* Check to see if the path already exists */
+	if(in_consentacles_project) {
+		if(fs.pathExistsSync(new_component_path)) {
+			/* Do not delete! */
+			throw new CError(null, error_header, [`Component already exists`], [], []);
+		}
+	} else {
+		if(fs.pathExistsSync(name)) {
+			throw new CError(null, error_header, [`Component already exists`], [], []);
+		}
+	}
+
+	/* Create the new directory */
+	try {
+		fs.emptyDirSync(new_component_path);
+	} catch(error) {
+		throw new CError(null, error_header, [`Failed to create directory: ${new_component_path}`], [], []);
+	}
+
+	/* Assemble the data object for Mustache templating */
+	/* i.e. foo/bar/baz -> baz */
+	const prettyName = name.split('\\').pop().split('/').pop();
+
+	/* Update the Consentacles settings */
+	if(in_consentacles_project) {
+		
+		const settings = project.consentacles;
+		if(!settings.hasOwnProperty(components)) {
+			settings.components.push({
+				name: prettyName,
+				location: 'local'
+			});
+		} else {
+
+		}
+	
+		const filename = `${project_root}/package.json`;
+		try {
+			fs.writeJsonSync(filename, project, {spaces: 4});
+		} catch(error) {
+			throw new CError(error, error_header, [`Could not update package.json`], [], [new_component_path]);
+		}
+	}
+
+	/* Mustache Object */
+	const view_data = {
+		name: prettyName
+	};
+
+	/* Copy & Customize each constituent page file */
+	const file_types = ["html", "scss", "ts"];
+	file_types.forEach((ext, index) => {
+		/* Read in the source template */
+		const component_source = `${__dirname}/source_files/component/component.${ext}`;
+		let file = null;
+		try {
+			file = fs.readFileSync(component_source, 'utf8');
+		} catch(error) {
+			throw new CError(error, error_header, [`Failed to read ${component_source}`], [], [new_component_path]);
+		}
+
+		/* Update the template with new data */
+		const data = stache.render(file, view_data);
+
+		/* Write to new page location */
+		const filename = `${new_component_path}/${name}.${ext}`;
+		try {
+			fs.outputFileSync(filename, data);
+		} catch(error) {
+			throw new CError(error, error_header, [`Failed to create ${filename}`], [], [new_component_path]);
+		}
+	});
+}
+
 /* 'new' can create many things, this function hands off control to the correct
  * sub-module to make those things happen.
 */
@@ -249,6 +356,10 @@ function dispatch(type, template, name) {
 		case 'page':
 			name = template;
 			page(name);
+			break;
+		case 'component':
+			name = template;
+			component(name);
 			break;
 		default:
 			const error_header = 'Unrecognized option provided.';

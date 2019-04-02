@@ -3,8 +3,8 @@
  * NPM.
 */
 
-const fs = require('fs');
-const pkg = require('../../package.json');
+const fs = require('fs-extra');
+const pkg = require(__dirname + '/../../package.json');
 const rimraf = require('rimraf');
 /* Linked binary command */
 const cmd = Object.getOwnPropertyNames(pkg.bin)[0];
@@ -15,45 +15,17 @@ const { spawn } = require('child_process');
 const workspace = `${__dirname}/test`;
 
 /* Make clean the testing workspace */
-beforeAll(async () => {
-	await new Promise((resolve, reject) => {
-		rimraf(workspace, (error) => {
-			if(error) { reject(); }
-			else {
-				fs.mkdir(workspace, {recursive: true}, (error) => {
-					if(error) { reject(); }
-					else { resolve(); }
-				});
-			}
-		});
-	});
+const owd = process.cwd();
+beforeAll(() => {
+	fs.removeSync(workspace);
+	fs.ensureDirSync(workspace);
 });
 
 /* Clean up the directory structure */
-afterAll(async () => {
-	await new Promise((resolve, reject) => {
-		rimraf(workspace, (error) => {
-			if(error) { reject(error); }
-			else { resolve(); }
-		});
-	});
+afterAll(() => {
+	process.chdir(owd);
+	fs.removeSync(workspace);
 });
-
-beforeEach(() => {
-	return process.chdir(workspace);
-});
-
-/* Helper Functions */
-
-/* Wraps fs.access in a promise to make it easier to handle */
-function fileExists(name) {
-	return new Promise((resolve, reject) => {
-		fs.access(name, (error) => {
-			if(error) { reject(error); }
-			else { resolve(true); }
-		});
-	});
-}
 
 describe("Exits with an error if unknown type is provided.", () => {
 	
@@ -74,10 +46,10 @@ describe("Exits with an error if unknown type is provided.", () => {
 	});
 });
 
-/* New project structure */
+/* New blank project structure */
 const project = {
 	directories: [
-		// "dist",
+		"dist",
 		"src/components",
 		"src/icons",
 		"src/images",
@@ -92,15 +64,17 @@ const project = {
 };
 
 describe("Project Testing", () => {
+	/* Set the WORKDIR to the test/ directory */
+	beforeEach(() => {
+		process.chdir(workspace);
+	});
 
 	test('Creates a project with the default name, if no name provided', (done) => {
 		const child = spawn(cmd, ['new', 'project']);
-		child.on('exit', async (code, signal) => {
+		child.on('exit', (code, signal) => {
 			expect(code).toBe(0);
-			fs.access('tentacle', (error) => {
-				expect(error).toBeNull();
-				done();
-			});
+			expect(fs.pathExistsSync('tentacle')).toBeTruthy();
+			done();
 		});
 	});
 
@@ -123,26 +97,19 @@ describe("Project Testing", () => {
 		});
 
 		test('Directories have been created correctly', () => {
-			directory_exists = [];
 			project.directories.forEach((value) => {
-				directory_exists.push(fileExists(`${workspace}/foo/${value}`));
+				expect(fs.pathExistsSync(`${workspace}/foo/${value}`)).toBeTruthy();
 			});
-			return Promise.all(directory_exists);
 		});
-
-		describe("Created the expected files", () => {
 			
-			test('Base files have been created', () => {
-				file_exists = [];
-				project.files.forEach((value) => {
-					file_exists.push(fileExists(`${workspace}/foo/${value}`));
-				});
-				return Promise.all(file_exists);
+		test('Base files have been created', () => {
+			project.files.forEach((value) => {
+				expect(fs.pathExistsSync(`${workspace}/foo/${value}`)).toBeTruthy();
 			});
 		});
 
 		test('package.json has been updated correctly', () => {
-			process.chdir('foo');
+			process.chdir(__dirname + '/test/foo');
 			const pkg = JSON.parse(fs.readFileSync('package.json'));
 			expect(pkg.consentacles.name).toMatch('foo');
 		});
@@ -187,12 +154,7 @@ describe("Page Testing", () => {
 			const child = spawn(cmd, ['new', 'page', 'bar']);
 			child.on('exit', async (code, signal) => {
 				expect(code).toBe(0);
-				let created = await fileExists('./src/pages/bar').catch((error) => {
-					expect(error).toBeNull();
-					console.log(error);
-					done();
-				});
-				expect(created).toBeTruthy();
+				expect(fs.pathExistsSync('./src/pages/bar')).toBeTruthy();
 				done();
 			});
 		});
@@ -206,14 +168,12 @@ describe("Page Testing", () => {
 		});
 
 		test('Created the expected files', () => {
-			const path = `./src/pages/bar/`;
+			const path = `${workspace}/test_pages/src/pages/bar/`;
 			const file_types = ['html', 'scss', 'ts'];
-			const file_exists = [];
 			file_types.forEach((ext, index) => {
 				const filename = (ext === 'html') ? `${path}index.html` : `${path}bar.${ext}`;
-				file_exists.push(fileExists(filename));
+				expect(fs.pathExistsSync(filename)).toBeTruthy();
 			});
-			return Promise.all(file_exists);
 		});
 	});
 
@@ -223,12 +183,7 @@ describe("Page Testing", () => {
 			const child = spawn(cmd, ['new', 'page', 'bar/vim']);
 			child.on('exit', async (code, signal) => {
 				expect(code).toBe(0);
-				let created = await fileExists('./src/pages/bar/vim').catch((error) => {
-					expect(error).toBeNull();
-					console.log(error);
-					done();
-				});
-				expect(created).toBeTruthy();
+				expect(fs.pathExistsSync('./src/pages/bar/vim')).toBeTruthy();
 				done();
 			});
 		});
@@ -242,14 +197,12 @@ describe("Page Testing", () => {
 		});
 
 		test('Created the expected files', () => {
-			const path = `./src/pages/bar/vim/`;
+			const path = `${workspace}/test_pages/src/pages/bar/vim/`;
 			const file_types = ['html', 'scss', 'ts'];
-			const file_exists = [];
 			file_types.forEach((ext, index) => {
 				const filename = (ext === 'html') ? `${path}index.html` : `${path}vim.${ext}`;
-				file_exists.push(fileExists(filename));
+				expect(fs.pathExistsSync(filename)).toBeTruthy();
 			});
-			return Promise.all(file_exists);
 		});
 	});
 

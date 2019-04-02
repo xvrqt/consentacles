@@ -3,9 +3,8 @@
  * NPM.
 */
 
-const fs = require('fs');
-const pkg = require('../../package.json');
-const rimraf = require('rimraf');
+const fs = require('fs-extra');
+const pkg = require(__dirname + '/../../package.json');
 
 /* Linked binary command for Consentacles */
 const cmd = Object.getOwnPropertyNames(pkg.bin)[0];
@@ -13,60 +12,32 @@ const cmd = Object.getOwnPropertyNames(pkg.bin)[0];
 /* We're testing a binary so we need to run child processes */
 const { spawn } = require('child_process');
 const workspace = `${__dirname}/test`;
+const owd = process.cwd();
 
 /* Make clean the testing workspace */
-beforeAll(async () => {
-
-	await new Promise((resolve, reject) => {
-		rimraf(workspace, (error) => {
-			if(error) { reject(); }
-			else {
-				fs.mkdir(workspace, {recursive: true}, (error) => {
-					if(error) { reject(); }
-					else { resolve(); }
-				});
-			}
-		});
-	});
-
+beforeAll((done) => {
+	/* Create an empty testing directory */
+	fs.emptyDirSync(workspace);
 	/* Create a new consentacles projext */
-	await new Promise ((resolve, reject) => {
-		process.chdir(workspace);
-		const child = spawn(cmd, ['new', 'project', 'foo']);
-		child.on('exit', async (code, signal) => {
-			if(code != 0) {
-				console.error("Could not create a new Consentacles project named 'foo' to test the build command. Abandoning build testing.");
-				reject();
-			} else { resolve(); }
-		});
+	process.chdir(workspace);
+	const child = spawn(cmd, ['new', 'project', 'foo']);
+	child.on('exit', async (code, signal) => {
+		if(code != 0) {
+			console.error("Could not create a new Consentacles project named 'foo' to test the build command. Abandoning build testing.");
+		}
+		done();
 	});
 });
 
 /* Clean up the directory structure */
-afterAll(async () => {
-	await new Promise((resolve, reject) => {
-		rimraf(workspace, (error) => {
-			if(error) { reject(error); }
-			else { resolve(); }
-		});
-	});
+afterAll(() => {
+	process.chdir(owd);
+	fs.removeSync(workspace);
 });
 
 beforeEach(() => {
-	return process.chdir(workspace);
+	process.chdir(workspace);
 });
-
-/* Helper Functions */
-
-/* Wraps fs.access in a promise to make it easier to handle */
-function fileExists(name) {
-	return new Promise((resolve, reject) => {
-		fs.access(name, (error) => {
-			if(error) { reject(error); }
-			else { resolve();}
-		});
-	});
-}
 
 // describe("Exits with an error if unknown type is provided.", () => {
 	

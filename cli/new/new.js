@@ -6,8 +6,14 @@ const stache = require('mustache');
 const util = require(__dirname + '/../utility');
 const CError = require(__dirname + '/../error');
 
+/* Pretty Colors */
+const chalk = require('chalk');
+if(process.env.chalk === 'disabled') {
+	chalk.enabled = false;
+}
+
 /* CLI input/output */
-// const inquirer = require('inquirer');
+const inquirer = require('inquirer');
 
 /* CONSTANTS */
 const types = [
@@ -119,17 +125,28 @@ function project(template, name) {
 		}
 	});
 
-	/* Update the package.json with the name and template */
-	const project = util.parsePackage(name);
-	project['consentacles']['name'] = name;
-	project['consentacles']['template'] = template;
+	/* Prompt the user to fill out details */
+	inquirer.prompt([
+		{
+			type: 'input',
+			name: 'baseURL',
+			message: `${chalk.dim("The base URL is used to generate the site map. You can add it later in package.json under the Consentacles object using the key 'baseURL'")}\n${chalk.magenta('Enter Base URL:')}`,
+			default: `http://example.com`
+		}
+	]).then((answers) => {
+		/* Update the package.json with the name and template */
+		const project = util.parsePackage(name);
+		project['consentacles']['name'] = name;
+		project['consentacles']['template'] = template;
+		project['consentacles']['baseURL'] = answers.baseURL;
 
-	const filename = `${name}/package.json`;
-	try {
-		fs.writeJsonSync(filename, project, {spaces: 4});
-	} catch(error) {
-		throw new CError(error, error_header, [`Could not configure package.json`], [], [name]);
-	}
+		const filename = `${name}/package.json`;
+		try {
+			fs.writeJsonSync(filename, project, {spaces: 4});
+		} catch(error) {
+			throw new CError(error, error_header, [`Could not configure package.json`], [], [name]);
+		}
+	});
 }
 
 /* Page Route */

@@ -3,39 +3,11 @@ const pkg = require(__dirname + '/../../package.json');
 const rimraf = require('rimraf');
 const stache = require('mustache');
 
-/* Pretty Colors */
-const log = require(__dirname + '/../logging');
 const util = require(__dirname + '/../utility');
+const CError = require(__dirname + '/../error');
 
 /* CLI input/output */
 // const inquirer = require('inquirer');
-
-/*******************
-* HELPER FUNCTIONS *
-********************/
-
-/* Wraps mkdir in a promise to make it easier to handle */
-function mkdir(name, recursive) {
-	return new Promise((resolve, reject) => {
-		recursive = recursive ? recursive : false;
-		fs.mkdir(name, {recursive: recursive}, (error) => {
-			if(error) {
-				printError(error);
-				reject();
-			} else { resolve(); }
-		})
-	})
-}
-
-/* Wraps fs.copyFile in a promize to make it more tractable */
-function copyFile(source, destination) {
-	return new Promise((resolve, reject) => {
-		fs.copyFile(source, destination, (error) => {
-			if(error) { reject(error); }
-			else { resolve(); }
-		});
-	});
-}
 
 /* CONSTANTS */
 const types = [
@@ -55,25 +27,24 @@ const defaults = {
 };
 
 /* Project Route */
-async function project(name) {
+function project(name) {
 	name = name ? name : defaults.project.name;
 	const error_header = `Failed to create new Consentacles project.`;
-	
+	const cleanUpAndExit = CError.cleanUpAndExit(error_header, name);
+
 	/* Check to see if the directory already exists */
-	await new Promise((resolve, reject) => {
-		fs.access(name, (error) => {
-			if(error && error.code === 'ENOENT') {
-				resolve();
-			} else {
-				log.error(error_header);
-				log.list(`Directory '${name}' already exists.`);
-				process.exit(1);	
-			}
-		});
-	});
+	if(fs.pathExistsSync(name)) {
+		throw new CError(null, error_header, [`Directory '${name}' already exists.`], [], []);
+	} else {
+		try {
+			fs.emptyDirSync(name);
+		} catch(error) {
+			throw new CError(error, error_header, [`Failed to create directory: ${name}`], [], [name]);
+		}
+	}
 
 	/* Pre-create all the directories because in some environments, empty
-	 * directories are not created.
+	 * directories are not created on copy.
 	*/
 	const directories = [
 		"dist",
@@ -87,11 +58,8 @@ async function project(name) {
 	];
 	directories.forEach((dir, index) => {
 		try { fs.emptyDirSync(`${name}/${dir}`); }
-		catch(error) { 
-			log.error(error_header);
-			log.list(`Could not create ${name}/${dir}`);
-			fs.removeSync(name);
-			process.exit(1);
+		catch(error) {
+			throw new CError(error, error_header, [`Could not create ${name}/${dir}`], [], [name]);
 		}
 	});
 
@@ -100,12 +68,8 @@ async function project(name) {
 	try {
 		fs.copySync(source_path, name, {});
 	} catch(error) {
-		log.error(error_header);
-		log.list(error.message);
-		fs.removeSync(name);
-		process.exit(1);
+		throw new CError(error, error_header, [`Could not copy project files to a new project.`], [], [name]);
 	}
-	process.chdir(name);
 
 	/* Run all the files through Mustaches to customize them a bit */
 	const view_data = {
@@ -115,63 +79,83 @@ async function project(name) {
 		'index.html'
 	];
 	stache_files.forEach((file, index) => {
-		const filename = `src/${file}`;
-		let data = fs.readFileSync(filename, 'utf8');
-		data = stache.render(data, view_data);
-		fs.writeFileSync(filename, data);
+		const filename = `${name}/src/${file}`;
+		let data;
+		try {
+			data = fs.readFileSync(filename, 'utf8');
+		} catch(error) {
+			throw new CError(error, error_header, [`Could read ${filename} in order to configure it.`], [], [name]);
+		}
+
+		const view = stache.render(data, view_data);
+
+		try {
+			fs.writeFileSync(filename, view);
+		} catch(error) {
+			throw new CError(error, error_header, [`Could write ${filename} in order to configure it.`], [], [name]);
+		}
 	});
 
 	/* Update the package.json with the name */
-	const {project, project_root} = util.inConsentaclesProject(error_header);
+	const project = util.parsePackage(name);
 	project['consentacles']['name'] = name;
 
-	const out_file = `${project_root}/package.json`;
-	const data = JSON.stringify(project, null, 4);
-	await new Promise((resolve, reject) => {
-		fs.writeFile(out_file, data, (error) => {
-			if(error) { reject(); }
-			else { resolve(); }
-		});
-	});
+	const filename = `${name}/package.json`;
+	try {
+		fs.writeJsonSync(filename, project, {spaces: 4});
+	} catch(error) {
+		throw new CError(error, error_header, [`Could not configure package.json`], [], [name]);
+	}
 }
 
 /* Page Route */
-async function page(name) {
-	/* Parameter checking */
+function page(name) {
+	/* Check that we're in a Consentacles project, setup error handling */
 	const error_header = `Failed to create a new page`;
-	if(name === undefined) {
-		log.error(error_header);
-		log.list(`No page name provided.`);
-		log.subtle(`Usage: $ consentacles new page <name>`);
-		process.exit(1);
+
+	/* Determine the project's root */
+	let project_root;
+	try {
+		project_root = util.getProjectRoot();
+	} catch(cerror) {
+		cerror.header = error_header;
+		throw cerror;
 	}
 
-	/* Check that we're in a Consentacles project. */
-	const {project, project_root} = util.inConsentaclesProject(error_header);
+	/* Parse the project configuration */
+	let project;
+	try {
+		project = util.parsePackage(`${project_root}/package.json`);
+	} catch(cerror) {
+		cerror.header = error_header;
+		throw cerror;
+	}
+
+	/* Set up paths */
 	const pages_path = `${project_root}/src/pages`;
 	const new_page_path = `${pages_path}/${name}`;
 
-	/* Check to see if the directory already exists and create it */
-	await new Promise((resolve, reject) => {
-		fs.access(new_page_path, (error) => {
-			if(error && error.code === 'ENOENT') {
-				/* Create the directory */
-				fs.mkdir(new_page_path, {recursive: true}, (error) => {
-					if(error) {
-						log.error(error_header);
-						log.list(`Failed to create directory: ${new_page_path}`);
-						process.exit(1);
-					} else { resolve(); }
-				});
-			} else {
-				log.error(error_header);
-				log.list(`Page '${name}' already exists.`);
-				process.exit(1);	
-			}
-		});
-	});
+	const exitWithError = util.cleanUpAndExit(error_header, new_page_path);
 
-	/* i.e. foo/bar -> bar */
+	/* Parameter checking */
+	if(name === undefined) {
+		throw new CError(null, error_header, [`No page name provided.`], [`Usage: $ consentacles new page <name>`], []);
+	}
+
+	/* Check to see if the directory already exists, if not create it */
+	if(fs.pathExistsSync(new_page_path)) {
+		/* Do not delete! */
+		throw new CError(null, error_header, [`Page already exists`], [], []);
+	} else {
+		try {
+			fs.emptyDirSync(new_page_path);
+		} catch(error) {
+			throw new CError(null, error_header, [`Failed to create directory: ${new_page_path}`], [], []);
+		}
+	}
+
+	/* Assemble the data object for Mustache templating */
+	/* i.e. foo/bar/baz -> baz */
 	const prettyName = name.split('\\').pop().split('/').pop();
 
 	/* Path the the root level styles directory. Used in path.scss */
@@ -190,29 +174,27 @@ async function page(name) {
 
 	/* Copy & Customize each constituent page file */
 	const file_types = ["html", "scss", "ts"];
-	const files_updated = []; // Array of promises
 	file_types.forEach((ext, index) => {
+		/* Read in the source template */
 		const page_source = `${__dirname}/source_files/page/page.${ext}`;
-		files_updated.push(new Promise((resolve, reject) => {
-			fs.readFile(page_source, 'utf8', (error, file) => {
-				if(error) { reject(); }
-				else {
-					/* Customize */
-					file = stache.render(file, view_data);
-					/* Write */
-					const out_path = (ext === 'html') ? `${new_page_path}/index.html` : `${new_page_path}/${prettyName}.${ext}`;
-					fs.writeFile(out_path, file, (error) => {
-						if(error) { reject(); }
-						else { resolve(); }
-					});
-				}
-			});
-		}));
-	});
-	await Promise.all(files_updated).catch(() => {
-		log.error(error_header);
-		log.list(`Failed to create the new page files.`);
-		process.exit(1);
+		let file = null;
+		try {
+			file = fs.readFileSync(page_source, 'utf8');
+		} catch(error) {
+			throw new CError(error, error_header, [`Failed to read ${page_source}`], [], [new_page_path]);
+		}
+
+		/* Update the template with new data */
+		const data = stache.render(file, view_data);
+
+		/* Write to new page location */
+		let filename = (ext === 'html') ? 'index' : prettyName;
+		filename = `${new_page_path}/${filename}.${ext}`;
+		try {
+			fs.outputFileSync(filename, data);
+		} catch(error) {
+			throw new CError(error, error_header, [`Failed to create ${filename}`], [], [new_page_path]);
+		}
 	});
 }
 
@@ -228,10 +210,12 @@ function dispatch(type, name) {
 			page(name);
 			break;
 		default:
-			log.error('Unrecognized option provided.');
-			log.subtle(`You can use 'new' to create ${types.map((str) => { return str + "s";}).join(', ')}`);
-			log.subtle(`Example: $ consentacles new project <name>`);
-			process.exit(1);					
+			const error_header = 'Unrecognized option provided.';
+			const sublties = [
+				`You can use 'new' to create ${types.map((str) => { return str + "s";}).join(', ')}`, 
+				`Example: $ consentacles new project <name>`
+			];
+			throw new CError(null, error_header, [], sublties);
 	}
 }
 

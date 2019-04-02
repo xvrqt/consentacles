@@ -32,8 +32,8 @@ const [,, ...args] = process.argv;
 
 /* Check to make sure that an argument was passed */
 if(args.length === 0) {
-	log.printError('No command provided.');
-	log.printSubtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
+	log.error('No command provided.');
+	log.subtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
 	process.exit(1);
 }
 
@@ -41,13 +41,17 @@ const command = args[0];
 
 switch(command) {
 	case 'new':
-		new_cmd.run(...args.slice(1));
+		try {
+			new_cmd.run(...args.slice(1));
+		} catch(e) { e.pce(); }
 		break;
 	case 'help':
 		help.run();
 		break;
 	case 'build':
-		build.run(...args.slice(1));
+		try {
+			build.run(...args.slice(1));
+		} catch(e) { e.pce(); }
 		break;
 	case 'serve':
 		serve.run(...args.slice(1));
@@ -60,7 +64,7 @@ switch(command) {
 		secret.run();
 		break;
 	default:
-		log.printError('Unknown command provided.');
-		log.printSubtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
+		log.error('Unknown command provided.');
+		log.subtle(`Available commands: ${commands.slice(0,-1).join(', ')}`);
 		process.exit(1);
 }

@@ -9,15 +9,14 @@ const pkg = require(__dirname + '/../package.json');
 const cmd = Object.getOwnPropertyNames(pkg.bin)[0];
 
 /* Commands */
-const help = require('./help.js');
-const secret = require('./secret.js');
+const help = require(__dirname + '/help.js');
+const secret = require(__dirname +'/secret.js');
 
 /* We're testing a binary so we need to run child processes */
 const { spawn } = require('child_process');
 
-const workspace = __dirname;
 beforeAll(() => {
-	process.chdir(workspace);
+	process.chdir(__dirname);
 });
 
 describe("Exits with an error if unknown command is provided", () => {
@@ -40,18 +39,6 @@ describe("Exits with an error if unknown command is provided", () => {
 	});
 });
 
-/* New, Build and Server have their own test suite as they are considerably
- * more complex.
-*/
-describe("NEW Command", () => {
-	test("Exits with error if the option is unspecified", (done) => {
-		const child = spawn(cmd, ['new']);
-		child.on('exit', (code, signal) => {
-			expect(code).toBe(1);
-			done();
-		});
-	});
-});
 
 describe("HELP Command", () => {
 	/* Test EMPTY invocation */

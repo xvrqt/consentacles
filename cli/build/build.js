@@ -7,17 +7,37 @@ const gulp = require('gulp');
 /* Local packages */
 const log = require(__dirname + '/../logging');
 const util = require(__dirname + '/../utility');
+const CError = require(__dirname + '/../error');
 
 function buildAll() {
 	const error_header = `Failed to build.`;
-	const {project, project_root} = util.inConsentaclesProject(error_header);
+	/* Determine the project's root */
+	let project_root;
+	try {
+		project_root = util.getProjectRoot();
+	} catch(cerror) {
+		cerror.header = error_header;
+		throw cerror;
+	}
+
+	/* Parse the project configuration */
+	let project;
+	try {
+		project = util.parsePackage(`${project_root}/package.json`);
+	} catch(cerror) {
+		cerror.header = error_header;
+		throw cerror;
+	}
 	const user_settings = project.consentacles;
 
 	/* Change the working directory to the project's root */
+	const owd = process.cwd();
 	process.chdir(project_root);
 
 	/* Run the Gulpfile to move everything to source */
-	gulp.task('default')();
+	gulp.task('default')(() => {
+		process.chdir(owd);
+	});
 }
 
 /* 'build' command can build the entire project (default) or it can build parts
@@ -33,10 +53,8 @@ function dispatch(type, name) {
 				console.log('Not yet implemented');
 				break;
 			default:
-				log.error('Unrecognized option provided.');
-				// log.printSubtle(`You can use 'new' to create ${types.map((str) => { return str + "s";}).join(', ')}`);
-				log.subtle(`Example: $ consentacles new project foo`);
-				process.exit(1);					
+				const error_header = 'Unrecognized option provided.';
+				throw new CError(null, error_header, [], []);
 		}
 	}
 }

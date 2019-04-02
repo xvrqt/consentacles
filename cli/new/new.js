@@ -30,7 +30,6 @@ const defaults = {
 function project(name) {
 	name = name ? name : defaults.project.name;
 	const error_header = `Failed to create new Consentacles project.`;
-	const cleanUpAndExit = CError.cleanUpAndExit(error_header, name);
 
 	/* Check to see if the directory already exists */
 	if(fs.pathExistsSync(name)) {
@@ -134,8 +133,6 @@ function page(name) {
 	/* Set up paths */
 	const pages_path = `${project_root}/src/pages`;
 	const new_page_path = `${pages_path}/${name}`;
-
-	const exitWithError = util.cleanUpAndExit(error_header, new_page_path);
 
 	/* Parameter checking */
 	if(name === undefined) {

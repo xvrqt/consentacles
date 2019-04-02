@@ -39,11 +39,22 @@ function printSubtle(text) {
 	console.log(chalk.dim(text));
 }
 
+/* Used to pretty print errors from 3rd party libraries */
+function additionalError(error) {
+	const code = error.code;
+	const message = error.message;
+	console.log(`Additional Information:`);
+	console.log(`Code: ${code}`);
+	console.log(`---------`);
+	console.log(message);
+}
+
 module.exports = {
 	pkg_name: pkg_name,
 	
 	print: print,
 	error: printError,
 	list: printErrorReason,
-	subtle: printSubtle
+	subtle: printSubtle,
+	additionalError: additionalError
 }

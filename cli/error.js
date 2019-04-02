@@ -35,12 +35,16 @@ class ConsentacleError {
 				log.subtle(sublty);
 			});
 		}
+
+		if(error) {
+			log.additionalError(error);
+		}
 	}
 
 	cleanUpAndExit() {
 		if(this.dirs_to_delete) {
 			this.dirs_to_delete.forEach((dir) => {
-				// fs.removeSync(dir);
+				fs.removeSync(dir);
 			});
 		}
 		process.exit(1);
@@ -49,30 +53,6 @@ class ConsentacleError {
 	pce() {
 		this.print();
 		this.cleanUpAndExit();
-	}
-
-	/* Convenience function so you don't always have to create a new error */
-	static cleanUpAndExit(header, error_explanations, sublties, dirs_to_delete) {
-
-		return (error_explanations, sublties) => {
-			log.error(error_header);
-			
-			if(error_explanations) {
-				error_explanations.forEach((explanation) => {
-					log.list(explanation);
-				});
-			}
-
-			if(sublties) {
-				sublties.forEach((sublty) => {
-					log.subtle(sublty);
-				});
-			}
-			if(dir_to_delete) {
-				fs.removeSync(dir_to_delete);
-			}
-			process.exit(1);
-		};
 	}
 }
 

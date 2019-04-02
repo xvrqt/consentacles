@@ -55,7 +55,8 @@ function project(template, name) {
 		"src/meta",
 		"src/pages",
 		"src/scripts",
-		"src/styles"
+		"src/styles",
+		"src/styles/fonts"
 	];
 	directories.forEach((dir, index) => {
 		try { fs.emptyDirSync(`${name}/${dir}`); }
@@ -118,9 +119,10 @@ function project(template, name) {
 		}
 	});
 
-	/* Update the package.json with the name */
+	/* Update the package.json with the name and template */
 	const project = util.parsePackage(name);
 	project['consentacles']['name'] = name;
+	project['consentacles']['template'] = template;
 
 	const filename = `${name}/package.json`;
 	try {

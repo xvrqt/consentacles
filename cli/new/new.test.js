@@ -56,10 +56,29 @@ const project = {
 		"src/meta",
 		"src/pages",
 		"src/scripts",
-		"src/styles"
+		"src/styles",
+		"src/styles/fonts"
 	],
 	files: [
-		"src/icons/source.png"
+		"icons/source.png",
+		"meta/humans.txt",
+		"meta/robots.txt",
+		"pages/404/404.scss",
+		"pages/404/index.html",
+		"styles/_reset.scss",
+		"index.html",
+		"main.ts",
+		"styles.scss"
+	],
+	demo: [
+		"components/bubble-background/bubble-background.scss",
+		"components/bubble-background/bubble-background.ts",
+		"components/tentacle-image/tentacle-image.ts",
+		"images/logo.png",
+		"scripts/example.ts",
+		"styles/_variables.scss",
+		"styles/fonts/mogra/_mogra.scss",
+		"styles/fonts/san-francisco/_san-francisco.scss"
 	]
 };
 
@@ -86,7 +105,7 @@ describe("Project Testing", () => {
 		});
 	});
 
-	describe("Creates a project with the a name 'foo'", () => {
+	describe("Creates a blank project with the a name 'foo'", () => {
 
 		test('Creates the project', (done) => {
 			const child = spawn(cmd, ['new', 'project', 'foo']);
@@ -104,7 +123,7 @@ describe("Project Testing", () => {
 			
 		test('Base files have been created', () => {
 			project.files.forEach((value) => {
-				expect(fs.pathExistsSync(`${workspace}/foo/${value}`)).toBeTruthy();
+				expect(fs.pathExistsSync(`${workspace}/foo/src/${value}`)).toBeTruthy();
 			});
 		});
 
@@ -112,6 +131,43 @@ describe("Project Testing", () => {
 			process.chdir(__dirname + '/test/foo');
 			const pkg = JSON.parse(fs.readFileSync('package.json'));
 			expect(pkg.consentacles.name).toMatch('foo');
+			expect(pkg.consentacles.template).toMatch('blank');
+		});
+	});
+
+	describe("Creates a demo project with the a name 'bar'", () => {
+
+		test('Creates the project', (done) => {
+			const child = spawn(cmd, ['new', 'project', 'demo', 'bar']);
+			child.on('exit', (code, signal) => {
+				expect(code).toBe(0);
+				done();
+			});
+		});
+
+		test('Directories have been created correctly', () => {
+			project.directories.forEach((value) => {
+				expect(fs.pathExistsSync(`${workspace}/bar/${value}`)).toBeTruthy();
+			});
+		});
+			
+		test('Base files have been created', () => {
+			project.files.forEach((value) => {
+				expect(fs.pathExistsSync(`${workspace}/bar/src/${value}`)).toBeTruthy();
+			});
+		});
+
+		test('Demo files have been created', () => {
+			project.demo.forEach((value) => {
+				expect(fs.pathExistsSync(`${workspace}/bar/src/${value}`)).toBeTruthy();
+			});
+		});
+
+		test('package.json has been updated correctly', () => {
+			process.chdir(__dirname + '/test/bar');
+			const pkg = JSON.parse(fs.readFileSync('package.json'));
+			expect(pkg.consentacles.name).toMatch('bar');
+			expect(pkg.consentacles.template).toMatch('demo');
 		});
 	});
 });

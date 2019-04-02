@@ -21,6 +21,8 @@ beforeAll((done) => {
 	/* Create a new consentacles projext */
 	process.chdir(workspace);
 	const child = spawn(cmd, ['new', 'project', 'foo']);
+	child.stdin.setEncoding('utf-8');
+	child.stdin.write('http://example.com\n');
 	child.on('exit', async (code, signal) => {
 		if(code != 0) {
 			console.error("Could not create a new Consentacles project named 'foo' to test the build command. Abandoning build testing.");

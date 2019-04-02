@@ -90,6 +90,8 @@ describe("Project Testing", () => {
 
 	test('Creates a project with the default name, if no name provided', (done) => {
 		const child = spawn(cmd, ['new', 'project']);
+		child.stdin.setEncoding('utf-8');
+		child.stdin.write('http://example.com\n');
 		child.on('exit', (code, signal) => {
 			expect(code).toBe(0);
 			expect(fs.pathExistsSync('tentacle')).toBeTruthy();
@@ -99,6 +101,8 @@ describe("Project Testing", () => {
 
 	test('Will not create a project if the directory with the same name already exists', (done) => {
 		const child = spawn(cmd, ['new', 'project']);
+		child.stdin.setEncoding('utf-8');
+		child.stdin.write('http://example.com\n');
 		child.on('exit', (code, signal) => {
 			expect(code).toBe(1);
 			done();
@@ -109,6 +113,8 @@ describe("Project Testing", () => {
 
 		test('Creates the project', (done) => {
 			const child = spawn(cmd, ['new', 'project', 'foo']);
+			child.stdin.setEncoding('utf-8');
+			child.stdin.write('http://example.com\n');
 			child.on('exit', (code, signal) => {
 				expect(code).toBe(0);
 				done();
@@ -139,6 +145,8 @@ describe("Project Testing", () => {
 
 		test('Creates the project', (done) => {
 			const child = spawn(cmd, ['new', 'project', 'demo', 'bar']);
+			child.stdin.setEncoding('utf-8');
+			child.stdin.write('http://example.com\n');
 			child.on('exit', (code, signal) => {
 				expect(code).toBe(0);
 				done();
@@ -178,13 +186,15 @@ describe("Page Testing", () => {
 	beforeAll((done) => {
 		process.chdir(workspace);
 		const child = spawn(cmd, ['new', 'project', 'test_pages']);
+		child.stdin.setEncoding('utf-8');
+		child.stdin.write('http://example.com\n');
 		child.on('exit', async (code, signal) => {
 			done();
 		});
 	});
 
 	beforeEach(() => {
-		return process.chdir(workspace + '/test_pages');
+		process.chdir(workspace + '/test_pages');
 	});
 
 	test('Fails to create a page if not in a Consentacles project', (done) => {

@@ -43,7 +43,7 @@ switch(command) {
 	case 'new':
 		try {
 			new_cmd.run(...args.slice(1));
-		} catch(e) { e.pce(); }
+		} catch(e) { console.log(e); e.pce(); }
 		break;
 	case 'help':
 		help.run();
@@ -51,7 +51,7 @@ switch(command) {
 	case 'build':
 		try {
 			build.run(...args.slice(1));
-		} catch(e) { e.pce(); }
+		} catch(e) { console.log(e);e.pce(); }
 		break;
 	case 'serve':
 		serve.run(...args.slice(1));

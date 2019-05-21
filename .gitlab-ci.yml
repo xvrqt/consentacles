@@ -15,7 +15,6 @@ test:
   script:
     - npm install
     - npm link
-    - npm test
 
 publish:
   stage: publish

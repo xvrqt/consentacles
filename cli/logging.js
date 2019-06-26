@@ -33,7 +33,7 @@ function printErrorReason(reason) {
 	console.log(chalk.yellowBright(' - ') + chalk.white(reason));
 }
 
-/* Prints dim text. Useful for additional info */
+/* Prints dim text. Useful for additional info. */
 function printSubtle(text) {
 	test = colorName(text);
 	console.log(chalk.dim(text));

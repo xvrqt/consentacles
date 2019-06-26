@@ -66,8 +66,6 @@ module.exports = {
 };
 
 /* GULP */
-const debug = require('gulp-debug');
-
 const del = require("del");
 const watch = require("gulp-watch");
 
